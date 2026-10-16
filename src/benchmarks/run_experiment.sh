@@ -298,7 +298,7 @@ check_apple_container() {
     local test_result=""
     
     # Run test in the background with timeout (with standardized resources)
-    (container run --rm --cpus="${CONTAINER_STANDARD_CPUS:-12}" --memory="${CONTAINER_STANDARD_MEMORY:-8G}" alpine:3.19 echo "test" >/tmp/container_test.out 2>&1) &
+    (container run --rm --cpus="${CONTAINER_STANDARD_CPUS:-12}" --memory="${CONTAINER_STANDARD_MEMORY:-8G}" alpine:3.24 echo "test" >/tmp/container_test.out 2>&1) &
     test_pid=$!
     
     # Wait up to 30 seconds
@@ -325,7 +325,7 @@ check_apple_container() {
     
     if [ "$test_result" = "TIMEOUT" ]; then
         print_warning "Apple container did not respond within 30 seconds"
-        print_detail "The container may be stuck or the alpine:3.19 image may not be available"
+        print_detail "The container may be stuck or the alpine:3.24 image may not be available"
         print_detail "Try: container system stop && container system start"
         print_info "Continuing anyway (may fail during the benchmarks)..."
     elif [ -n "$test_result" ] && echo "$test_result" | grep -q "test"; then
@@ -424,8 +424,8 @@ generate_manifest() {
     # Capture image digests
     local nginx_digest_docker=$(get_image_digest "docker" "nginx:stable")
     local nginx_digest_container=$(get_image_digest "container" "nginx:stable")
-    local alpine_digest_docker=$(get_image_digest "docker" "alpine:3.19")
-    local alpine_digest_container=$(get_image_digest "container" "alpine:3.19")
+    local alpine_digest_docker=$(get_image_digest "docker" "alpine:3.24")
+    local alpine_digest_container=$(get_image_digest "container" "alpine:3.24")
     
     # Capture hardware information
     local cpu_model=$(sysctl -n machdep.cpu.brand_string 2>/dev/null || echo "N/A")
@@ -460,9 +460,9 @@ nginx:stable (Docker):
   Digest: ${nginx_digest_docker}
 nginx:stable (Apple container):
   Digest: ${nginx_digest_container}
-alpine:3.19 (Docker):
+alpine:3.24 (Docker):
   Digest: ${alpine_digest_docker}
-alpine:3.19 (Apple container):
+alpine:3.24 (Apple container):
   Digest: ${alpine_digest_container}
 
 === STATISTICAL SETTINGS ===

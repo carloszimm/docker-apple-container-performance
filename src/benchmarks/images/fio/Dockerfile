@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:3.24
 
 # Minimal, deterministic image for the benchmark:
 # - Removes "setup noise" (apk add) from inside the iterations

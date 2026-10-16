@@ -88,7 +88,7 @@ set -euo pipefail
 # DEPENDENCIES:
 #   - Docker Desktop installed and running
 #   - Apple container installed and running
-#   - alpine:3.19 image available (STREAM will be compiled inside the container)
+#   - alpine:3.24 image available (STREAM will be compiled inside the container)
 #
 # OUTPUT:
 #   Results are saved to: bench_results/stream_performance_<timestamp>/
@@ -161,8 +161,8 @@ check_sample_size "$ITERATIONS" "$CONFIDENCE_LEVEL"
 # - Use a fixed local image with the toolchain already installed (no apk add in the loop)
 # - Prepare the binary (download + compilation) once per scenario, OUTSIDE the measurement loop
 # - Measure only the execution of ./stream via exec in a persistent worker container
-STREAM_BASE_IMAGE=${STREAM_BASE_IMAGE:-alpine:3.19}
-STREAM_IMAGE=${STREAM_IMAGE:-bench-stream:alpine-3.19}
+STREAM_BASE_IMAGE=${STREAM_BASE_IMAGE:-alpine:3.24}
+STREAM_IMAGE=${STREAM_IMAGE:-bench-stream:alpine-3.24}
 STREAM_DIGEST=""
 
 # Retry control (to reduce small samples caused by transient failures)

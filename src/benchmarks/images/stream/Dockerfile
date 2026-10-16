@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:3.24
 
 # Minimal, deterministic image for the STREAM benchmark:
 # - Removes toolchain "setup noise" from inside the iterations (no apk add in the loop)

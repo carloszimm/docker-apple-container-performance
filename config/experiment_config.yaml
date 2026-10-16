@@ -131,17 +131,17 @@ system:
       tag: "stable"  # Fixed tag (nginx keeps "stable" as a specific version)
       digest: "auto"  # Will be filled with: docker image inspect nginx:stable --format '{{.RepoDigests}}'
     alpine:
-      tag: "3.19"  # Fixed tag for reproducibility (do NOT use "latest")
-      digest: "auto"  # Will be filled with: docker image inspect alpine:3.19 --format '{{.RepoDigests}}'
+      tag: "3.24"  # Fixed tag for reproducibility (do NOT use "latest")
+      digest: "auto"  # Will be filled with: docker image inspect alpine:3.24 --format '{{.RepoDigests}}'
     alpine_fio:
-      tag: "3.19"  # Same version as the base Alpine
+      tag: "3.24"  # Same version as the base Alpine
       digest: "auto"  # Used for Disk I/O tests
     sysbench:
-      # Image built locally from Alpine 3.19 + apk add sysbench.
+      # Image built locally from Alpine 3.24 + apk add sysbench.
       # Recipe: ensure_sysbench_image() in src/benchmarks/run_cpu_performance.sh.
       # Same image (same digest) used on both runtimes to ensure validity.
       image: "local/sysbench"
-      tag: "1.0.20-alpine3.19"
+      tag: "1.0.20-alpine3.24"
       digest: "sha256:303a3f9850124e3ebf802ce7999cd1aee33fe0b26daf54e8a62443a4e8e03c84"  # image actually used in the study
   
   # Known limitations

@@ -76,7 +76,7 @@ set -euo pipefail
 # DEPENDENCIES:
 #   - Docker Desktop installed and running
 #   - Apple container installed and running
-#   - alpine:3.19 image available on both runtimes
+#   - alpine:3.24 image available on both runtimes
 #
 # OUTPUT:
 #   Results are saved to: bench_results/startup_performance_<timestamp>/
@@ -182,7 +182,7 @@ estimate_sample_size_startup_pretest() {
         start_time=$(date +%s.%N)
 
         # Run a simple container (same operation as the startup_warm scenario)
-        docker run --rm alpine:3.19 echo "test" > /dev/null 2>&1
+        docker run --rm alpine:3.24 echo "test" > /dev/null 2>&1
 
         end_time=$(date +%s.%N)
         duration_seconds=$(echo "$end_time - $start_time" | bc -l)
@@ -317,11 +317,11 @@ run_warmup_iterations() {
     for w in $(seq 1 $warmup_count); do
         if [ "$runtime" = "docker" ]; then
             if [ "$test_type" = "startup_warm" ]; then
-                docker run --rm alpine:3.19 echo "test" > /dev/null 2>&1
+                docker run --rm alpine:3.24 echo "test" > /dev/null 2>&1
             fi
         elif [ "$runtime" = "container" ]; then
             if [ "$test_type" = "startup_warm" ]; then
-                run_container_with_standard_resources "container" "alpine:3.19" "echo" "test" > /dev/null 2>&1
+                run_container_with_standard_resources "container" "alpine:3.24" "echo" "test" > /dev/null 2>&1
             fi
         fi
         
@@ -394,11 +394,11 @@ run_benchmark() {
         
         if [ "$runtime" = "docker" ]; then
             if [ "$test_type" = "startup_warm" ]; then
-                docker run --rm alpine:3.19 echo "test" > /dev/null 2>&1
+                docker run --rm alpine:3.24 echo "test" > /dev/null 2>&1
             fi
         elif [ "$runtime" = "container" ]; then
             if [ "$test_type" = "startup_warm" ]; then
-                run_container_with_standard_resources "container" "alpine:3.19" "echo" "test" > /dev/null 2>&1
+                run_container_with_standard_resources "container" "alpine:3.24" "echo" "test" > /dev/null 2>&1
             fi
         fi
         

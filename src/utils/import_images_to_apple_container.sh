@@ -61,16 +61,16 @@ echo ""
 # =============================================================================
 
 # IMPORTANT: Use fixed tags (not "latest") for scientific reproducibility
-# Note: sysbench is installed dynamically inside alpine:3.19 at runtime
+# Note: sysbench is installed dynamically inside alpine:3.24 at runtime
 # If a prebuilt image is needed, it will be built locally
 IMAGES=(
-    "alpine:3.19"
+    "alpine:3.24"
     "nginx:stable"
 )
 
 # Optional image that will be built locally if needed
-# Tag based on the sysbench version (1.0.20) and base (alpine:3.19)
-SYSBENCH_IMAGE="local/sysbench:1.0.20-alpine3.19"
+# Tag based on the sysbench version (1.0.20) and base (alpine:3.24)
+SYSBENCH_IMAGE="local/sysbench:1.0.20-alpine3.24"
 BUILD_SYSBENCH=false
 
 # Temporary directory for TAR files
@@ -172,12 +172,12 @@ build_sysbench_image() {
     mkdir -p "$build_dir"
     
     cat > "$build_dir/Dockerfile" << 'EOF'
-FROM alpine:3.19
+FROM alpine:3.24
 RUN apk add --no-cache sysbench
 ENTRYPOINT ["/usr/bin/sysbench"]
 LABEL version="1.0.20"
-LABEL base="alpine:3.19"
-LABEL description="sysbench 1.0.20 on Alpine Linux 3.19"
+LABEL base="alpine:3.24"
+LABEL description="sysbench 1.0.20 on Alpine Linux 3.24"
 EOF
     
     # Build in Docker

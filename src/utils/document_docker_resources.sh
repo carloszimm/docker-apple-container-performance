@@ -154,7 +154,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         ROSETTA_DETECTED="functional"
         # Check whether Docker is using native ARM64
         DOCKER_ARCH=$(docker version --format '{{.Server.Arch}}' 2>/dev/null || echo "")
-        CONTAINER_ARCH=$(docker run --rm alpine:3.19 uname -m 2>/dev/null || echo "")
+        CONTAINER_ARCH=$(docker run --rm alpine:3.24 uname -m 2>/dev/null || echo "")
         
         if [[ "$DOCKER_ARCH" == "arm64" ]] && [[ "$CONTAINER_ARCH" == "aarch64" ]]; then
             print_success "  Rosetta is active on the system, but Docker is using native ARM64 (ideal)"

@@ -132,10 +132,10 @@ print_step "3. Docker Images Verification"
 echo ""
 
 # Registry images — can be obtained via docker pull
-REGISTRY_IMAGES=("alpine:3.19" "nginx:stable")
-# Local images — must be built before the experiment (the sysbench image local/sysbench:1.0.20-alpine3.19
+REGISTRY_IMAGES=("alpine:3.24" "nginx:stable")
+# Local images — must be built before the experiment (the sysbench image local/sysbench:1.0.20-alpine3.24
 # is built on demand by the CPU and memory scripts; see src/benchmarks/images/sysbench/Dockerfile)
-LOCAL_IMAGES=("bench-fio:alpine-3.19")
+LOCAL_IMAGES=("bench-fio:alpine-3.24")
 MISSING_IMAGES=()
 
 for image in "${REGISTRY_IMAGES[@]}"; do

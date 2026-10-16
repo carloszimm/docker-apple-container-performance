@@ -40,8 +40,8 @@ CONTAINER_STANDARD_MEMORY=${CONTAINER_STANDARD_MEMORY:-8G}   # 8 GB (same as Doc
 #   $@ - Remaining arguments for container run (flags, command, etc.)
 #
 # Example:
-#   run_container_with_standard_resources "container" "alpine:3.19" "echo test"
-#   run_container_with_standard_resources "container" "alpine:3.19" "2G" "sh -c 'echo test'"
+#   run_container_with_standard_resources "container" "alpine:3.24" "echo test"
+#   run_container_with_standard_resources "container" "alpine:3.24" "2G" "sh -c 'echo test'"
 #
 # Notes:
 #   - Docker Desktop already has globally limited resources (Settings → Resources)

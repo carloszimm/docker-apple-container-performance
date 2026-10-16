@@ -29,8 +29,8 @@ set -euo pipefail
 #
 #   SYSBENCH_IMAGE
 #       Same semantics as in run_cpu_performance.sh. Default:
-#       local/sysbench:1.0.20-alpine3.19, built via ensure_sysbench_image
-#       (Alpine 3.19 + apk add sysbench). Same digest on both runtimes.
+#       local/sysbench:1.0.20-alpine3.24, built via ensure_sysbench_image
+#       (Alpine 3.24 + apk add sysbench). Same digest on both runtimes.
 #       Example: SYSBENCH_IMAGE=other/image:tag ./run_memory_performance.sh
 #
 #   Parameters Common to All Benchmarks:
@@ -82,7 +82,7 @@ set -euo pipefail
 # DEPENDENCIES:
 #   - Docker Desktop installed and running
 #   - Apple container installed and running
-#   - sysbench image available (local/sysbench:1.0.20-alpine3.19 by default; see SYSBENCH_IMAGE)
+#   - sysbench image available (local/sysbench:1.0.20-alpine3.24 by default; see SYSBENCH_IMAGE)
 #   - sysbench installed locally (for verification)
 #
 # OUTPUT:
@@ -154,7 +154,7 @@ check_sample_size "$ITERATIONS" "$CONFIDENCE_LEVEL"
 # Image with sysbench pre-installed, built locally to ensure a reproducible
 # digest that is identical on both runtimes (see ensure_sysbench_image
 # in run_cpu_performance.sh).
-SYSBENCH_IMAGE=${SYSBENCH_IMAGE:-local/sysbench:1.0.20-alpine3.19}
+SYSBENCH_IMAGE=${SYSBENCH_IMAGE:-local/sysbench:1.0.20-alpine3.24}
 SYSBENCH_DIGEST=""
 
 # Ensure the sysbench image is available in the runtime (METHODOLOGICAL RIGOR)
@@ -171,11 +171,11 @@ ensure_sysbench_image() {
                 local build_dir="${OUTPUT_DIR:-.}/_sysbench_build"
                 mkdir -p "$build_dir"
                 cat > "$build_dir/Dockerfile" << 'EOF'
-FROM alpine:3.19
+FROM alpine:3.24
 RUN apk add --no-cache sysbench
 ENTRYPOINT ["/usr/bin/sysbench"]
 EOF
-                local local_tag="local/sysbench:1.0.20-alpine3.19"
+                local local_tag="local/sysbench:1.0.20-alpine3.24"
                 if docker build -q -t "$local_tag" "$build_dir" >/dev/null 2>&1; then
                     docker rmi ${SYSBENCH_IMAGE} >/dev/null 2>&1 || true
                     SYSBENCH_IMAGE="$local_tag"
@@ -201,11 +201,11 @@ EOF
                     local build_dir2="${OUTPUT_DIR:-.}/_sysbench_build"
                     mkdir -p "$build_dir2"
                     cat > "$build_dir2/Dockerfile" << 'EOF'
-FROM alpine:3.19
+FROM alpine:3.24
 RUN apk add --no-cache sysbench
 ENTRYPOINT ["/usr/bin/sysbench"]
 EOF
-                    local local_tag2="local/sysbench:1.0.20-alpine3.19"
+                    local local_tag2="local/sysbench:1.0.20-alpine3.24"
                     if docker build -q -t "$local_tag2" "$build_dir2" >/dev/null 2>&1; then
                         SYSBENCH_IMAGE="$local_tag2"
                         print_success "Local image built: ${SYSBENCH_IMAGE}"

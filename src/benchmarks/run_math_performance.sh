@@ -84,7 +84,7 @@ set -euo pipefail
 # DEPENDENCIES:
 #   - Docker Desktop installed and running
 #   - Apple container installed and running
-#   - alpine:3.19 image available (bc will be installed in the container)
+#   - alpine:3.24 image available (bc will be installed in the container)
 #
 # OUTPUT:
 #   Results are saved to: bench_results/math_performance_<timestamp>/
@@ -147,7 +147,7 @@ MIN_SAMPLE_SIZE_RECOMMENDED=$(calculate_min_sample_size "$CONFIDENCE_LEVEL")
 check_sample_size "$ITERATIONS" "$CONFIDENCE_LEVEL"
 
 # Base image for compiling Y-cruncher (METHODOLOGICAL RIGOR: use a fixed tag, not latest)
-MATH_IMAGE=${MATH_IMAGE:-alpine:3.19}
+MATH_IMAGE=${MATH_IMAGE:-alpine:3.24}
 MATH_DIGEST=""
 
 # Number of PI digits to compute (default: 10,000 = 1e4)

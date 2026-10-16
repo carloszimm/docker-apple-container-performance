@@ -81,7 +81,7 @@ set -euo pipefail
 # DEPENDENCIES:
 #   - Docker Desktop installed and running
 #   - Apple container installed and running
-#   - Base image alpine:3.19 available (the local benchmark image with fio+jq is built automatically)
+#   - Base image alpine:3.24 available (the local benchmark image with fio+jq is built automatically)
 #
 # OUTPUT:
 #   Results are saved to: bench_results/disk_performance_<timestamp>/
@@ -159,10 +159,10 @@ check_sample_size "$ITERATIONS" "$CONFIDENCE_LEVEL"
 # - Prepare the dataset (test file) once per test, outside the measurement
 #
 # Reproducibility note:
-# - Fixed base: alpine:3.19
+# - Fixed base: alpine:3.24
 # - Local derived image: built automatically if missing
-FIO_BASE_IMAGE=${FIO_BASE_IMAGE:-alpine:3.19}
-FIO_IMAGE=${FIO_IMAGE:-bench-fio:alpine-3.19}
+FIO_BASE_IMAGE=${FIO_BASE_IMAGE:-alpine:3.24}
+FIO_IMAGE=${FIO_IMAGE:-bench-fio:alpine-3.24}
 FIO_DIGEST=""
 
 # Test size in MB (default: 1GB = 1024MB)

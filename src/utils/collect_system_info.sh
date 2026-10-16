@@ -615,7 +615,7 @@ if [ "$DOCKER_RUNNING" = true ]; then
         
         # Note: sysbench does not need a pre-built image - it is installed dynamically
         IMAGES=(
-            "alpine:3.19"
+            "alpine:3.24"
             "nginx:stable"
         )
         
@@ -661,7 +661,7 @@ if [ "$DOCKER_RUNNING" = true ]; then
     else
         print_step "[5/9] Validating Images"
         # Validation mode: check whether images exist
-        IMAGES_TO_CHECK=("alpine:3.19" "nginx:stable")
+        IMAGES_TO_CHECK=("alpine:3.24" "nginx:stable")
         MISSING_COUNT=0
         for image in "${IMAGES_TO_CHECK[@]}"; do
             if ! docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -q "^${image}$"; then
@@ -710,7 +710,7 @@ The import process converts the image from Docker format to OCI, creating a new 
 **Identity Guarantees:**
 - ✅ Both images were pulled from Docker Hub with the same fixed tag
 - ✅ Direct import from Docker into Apple container (no modifications)
-- ✅ Use of fixed tags (`alpine:3.19`, `nginx:stable`) instead of `latest`
+- ✅ Use of fixed tags (`alpine:3.24`, `nginx:stable`) instead of `latest`
 
 
 ---
@@ -721,7 +721,7 @@ EOF
 
         # Note: sysbench does not need a pre-built image - it is installed dynamically
         IMAGES=(
-            "alpine:3.19"
+            "alpine:3.24"
             "nginx:stable"
         )
 
@@ -837,10 +837,10 @@ except:
         {
             echo "### sysbench"
             echo ""
-            echo "**Note:** sysbench does not use a pre-built image. It is installed dynamically inside \`alpine:3.19\` during benchmark execution."
+            echo "**Note:** sysbench does not use a pre-built image. It is installed dynamically inside \`alpine:3.24\` during benchmark execution."
             echo ""
             echo "**Installation Process:**"
-            echo "- The benchmarks run: \`apk add --no-cache sysbench\` inside the \`alpine:3.19\` container"
+            echo "- The benchmarks run: \`apk add --no-cache sysbench\` inside the \`alpine:3.24\` container"
             echo "- This ensures the same sysbench version is installed on both systems (Docker and Apple container)"
             echo "- Installation uses the same Alpine repository, ensuring identity"
             echo ""
@@ -856,7 +856,7 @@ except:
             echo ""
             echo "| Image | Docker | Apple container | Status |"
             echo "|--------|--------|-----------------|--------|"
-            echo "| \`alpine:3.19\` | ✅ Available | ✅ Available | ✅ Imported |"
+            echo "| \`alpine:3.24\` | ✅ Available | ✅ Available | ✅ Imported |"
             echo "| \`nginx:stable\` | ✅ Available | ✅ Available | ✅ Imported |"
             echo "| \`sysbench\` | ⚙️ Installed dynamically | ⚙️ Installed dynamically | ✅ Same process |"
             echo ""
@@ -909,7 +909,7 @@ EOF
             echo "### Docker Container"
             echo ""
             echo '```bash'
-            docker run --rm alpine:3.19 sh -c "cat /etc/os-release && echo '' && uname -a" 2>/dev/null || echo "Error running"
+            docker run --rm alpine:3.24 sh -c "cat /etc/os-release && echo '' && uname -a" 2>/dev/null || echo "Error running"
             echo '```'
             echo ""
         } >> "$CONTAINER_ENV_FILE"
@@ -919,7 +919,7 @@ EOF
             echo "### Apple container"
             echo ""
             echo '```bash'
-            container run --rm alpine:3.19 sh -c "cat /etc/os-release && echo '' && uname -a" 2>/dev/null || echo "Error running"
+            container run --rm alpine:3.24 sh -c "cat /etc/os-release && echo '' && uname -a" 2>/dev/null || echo "Error running"
             echo '```'
             echo ""
         } >> "$CONTAINER_ENV_FILE"
@@ -930,13 +930,13 @@ EOF
         echo ""
         echo "### sysbench"
         echo ""
-        echo "**Note:** sysbench is installed dynamically inside alpine:3.19 during benchmark execution."
+        echo "**Note:** sysbench is installed dynamically inside alpine:3.24 during benchmark execution."
         echo ""
         echo "**Docker (installed dynamically):**"
-        docker run --rm alpine:3.19 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null | sed 's/^/  - /' || echo "  - Not available"
+        docker run --rm alpine:3.24 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null | sed 's/^/  - /' || echo "  - Not available"
         echo ""
         echo "**Apple container (installed dynamically):**"
-        container run --rm alpine:3.19 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null | sed 's/^/  - /' || echo "  - Not available"
+        container run --rm alpine:3.24 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null | sed 's/^/  - /' || echo "  - Not available"
         echo ""
         echo "### Nginx"
         echo ""
@@ -1175,10 +1175,10 @@ if [ "$DOCKER_RUNNING" = true ] && [ "$APPLE_CONTAINER_RUNNING" = true ]; then
         echo "=== Tools INSIDE the Containers ==="
         echo ""
         echo "=== sysbench (Docker - installed dynamically) ==="
-        docker run --rm alpine:3.19 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null || echo "Not available"
+        docker run --rm alpine:3.24 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null || echo "Not available"
         echo ""
         echo "=== sysbench (Apple container - installed dynamically) ==="
-        container run --rm alpine:3.19 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null || echo "Not available"
+        container run --rm alpine:3.24 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null || echo "Not available"
         echo ""
         echo "=== Nginx (Docker) ==="
         docker run --rm nginx:stable nginx -v 2>&1 || echo "Not available"
@@ -1276,7 +1276,7 @@ fi
 # Check images in Apple container (direct check)
 if [ "$DOCKER_RUNNING" = true ] && [ "$APPLE_CONTAINER_RUNNING" = true ]; then
     # Directly check whether the images exist in Apple container
-    IMAGES_TO_CHECK=("alpine:3.19" "nginx:stable")
+    IMAGES_TO_CHECK=("alpine:3.24" "nginx:stable")
     MISSING_IMAGES=()
     
     for image in "${IMAGES_TO_CHECK[@]}"; do

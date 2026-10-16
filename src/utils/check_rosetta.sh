@@ -40,7 +40,7 @@ if docker version >/dev/null 2>&1; then
         
         # Additional check: test a real container
         echo "   Testing native ARM64 container..."
-        if CONTAINER_ARCH=$(docker run --rm alpine:3.19 uname -m 2>/dev/null); then
+        if CONTAINER_ARCH=$(docker run --rm alpine:3.24 uname -m 2>/dev/null); then
             if [ "$CONTAINER_ARCH" = "aarch64" ]; then
                 echo "✅ Docker containers running natively on ARM64"
             elif [ "$CONTAINER_ARCH" = "x86_64" ]; then
@@ -72,7 +72,7 @@ if [ "$ROSETTA_ACTIVE" = true ]; then
     if docker version >/dev/null 2>&1; then
         DOCKER_ARCH=$(docker version --format '{{.Server.Arch}}' 2>/dev/null)
         if [ "$DOCKER_ARCH" = "arm64" ]; then
-            if CONTAINER_ARCH=$(docker run --rm alpine:3.19 uname -m 2>/dev/null); then
+            if CONTAINER_ARCH=$(docker run --rm alpine:3.24 uname -m 2>/dev/null); then
                 if [ "$CONTAINER_ARCH" = "aarch64" ]; then
                     echo "✅ DOCKER RUNNING NATIVELY ON ARM64"
                     echo "   Active Rosetta will not affect the Docker benchmark."
@@ -122,7 +122,7 @@ if [ "$ROSETTA_ACTIVE" = true ]; then
     if docker version >/dev/null 2>&1; then
         DOCKER_ARCH=$(docker version --format '{{.Server.Arch}}' 2>/dev/null)
         if [ "$DOCKER_ARCH" = "arm64" ]; then
-            if CONTAINER_ARCH=$(docker run --rm alpine:3.19 uname -m 2>/dev/null); then
+            if CONTAINER_ARCH=$(docker run --rm alpine:3.24 uname -m 2>/dev/null); then
                 if [ "$CONTAINER_ARCH" = "aarch64" ]; then
                     echo "✅ System ready for benchmarking (native ARM64 Docker)"
                     exit 0

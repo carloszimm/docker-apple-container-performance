@@ -30,7 +30,7 @@ bash src/utils/setup_environment.sh
 
 This installs the Homebrew tools, checks that Apple container is version 1.5.0, creates `venv/`, installs `requirements.txt`, and writes the exact resolved Python package versions to `requirements.lock`. Apple container itself must be installed manually from the [1.5.0 release](https://github.com/apple/container/releases/tag/1.5.0) (Homebrew currently ships an older version).
 
-The benchmark images are pinned to fixed tags (`alpine:3.19`, `nginx:stable`) and built from `src/benchmarks/images/` (fio, STREAM, sysbench). The STREAM source (`stream.c`, v5.10) is vendored in the repository, so no network access is needed at run time. Image digests are recorded in `docs/system_info/image_digests.md`.
+The benchmark images are pinned to fixed tags (`alpine:3.24`, `nginx:stable`) and built from `src/benchmarks/images/` (fio, STREAM, sysbench). The STREAM source (`stream.c`, v5.10) is vendored in the repository, so no network access is needed at run time. Image digests are recorded in `docs/system_info/image_digests.md`.
 
 Check that the environment is ready before running:
 
@@ -64,7 +64,7 @@ bash src/benchmarks/run_math_performance.sh
 
 **HTTP benchmark:** uses `nginx:stable` on both runtimes (no fallback). Invalid iterations are recorded in `http_server_failures.csv`. The port strategy is `auto` by default (avoids "port in use" conflicts); configure it via `HTTP_PORT`, `HTTP_PORT_STRATEGY`, and `HTTP_PORT_MAX_TRIES`.
 
-**Disk I/O benchmark:** prepares the dataset and starts the container outside the measurement loop. Each iteration measures only `fio` via `exec`, removing setup noise. It uses the local image `bench-fio:alpine-3.19`, built automatically from `src/benchmarks/images/fio/Dockerfile`.
+**Disk I/O benchmark:** prepares the dataset and starts the container outside the measurement loop. Each iteration measures only `fio` via `exec`, removing setup noise. It uses the local image `bench-fio:alpine-3.24`, built automatically from `src/benchmarks/images/fio/Dockerfile`.
 
 ## Analyzing the results
 
