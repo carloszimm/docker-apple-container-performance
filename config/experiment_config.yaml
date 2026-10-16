@@ -90,8 +90,7 @@ benchmark:
   math:
     pi_digits: 10000  # digits of PI (10 thousand, per the methodology)
     threads: [1, 2]   # bc is single-threaded per process; the 2t scenario runs 2 processes in parallel
-                      # Generated CSVs: docker_ycruncher_{1,2}t.csv and container_ycruncher_{1,2}t.csv
-                      # (the name "ycruncher" is historical -- the actual tool is bc)
+                      # Generated CSVs: docker_pi_{1,2}t.csv and container_pi_{1,2}t.csv
 
 # Analysis settings
 analysis:

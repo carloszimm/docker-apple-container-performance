@@ -89,8 +89,8 @@ set -euo pipefail
 # OUTPUT:
 #   Results are saved to: bench_results/math_performance_<timestamp>/
 #   - math_performance_summary.csv: Consolidated summary with statistics
-#   - docker_ycruncher_*.csv: Individual Docker results
-#   - container_ycruncher_*.csv: Individual Apple container results
+#   - docker_pi_*.csv: Individual Docker results
+#   - container_pi_*.csv: Individual Apple container results
 #   - results_math.csv: Main format for statistical analysis
 #   - manifest.txt: Experiment metadata (configuration, methodology)
 #
@@ -212,9 +212,6 @@ ensure_math_image() {
     fi
 }
 
-# TODO: The CSV file names and comments in this script still reference "ycruncher"
-# (e.g. docker_ycruncher_1t.csv, container_ycruncher_2t.csv). The actual tool is bc.
-# Rename the output files and update all comments to reflect this.
 # Function to run warmup iterations (discarded)
 run_warmup_math() {
     local runtime=$1
@@ -273,7 +270,7 @@ run_math_benchmark() {
         print_info "ℹ️  Warmup disabled (WARMUP_ITERATIONS=${WARMUP_ITERATIONS})"
     fi
     
-    local output_file="${OUTPUT_DIR}/${runtime}_ycruncher_${threads}t.csv"
+    local output_file="${OUTPUT_DIR}/${runtime}_pi_${threads}t.csv"
     local valid_count=0
     local total_count=0
     local high_load_count=0
@@ -386,7 +383,7 @@ consolidate_results() {
     echo "timestamp,platform,tool,test,threads,metric,value,unit,notes" > "$math_file"
     
     # Process each results file
-    for file in "${OUTPUT_DIR}"/*_ycruncher_*.csv; do
+    for file in "${OUTPUT_DIR}"/*_pi_*.csv; do
         if [ -f "$file" ]; then
             local runtime=$(basename "$file" | cut -d'_' -f1)
             local threads=$(basename "$file" | sed 's/.*_\([0-9]*\)t\.csv/\1/')

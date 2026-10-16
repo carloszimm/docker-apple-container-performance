@@ -95,7 +95,7 @@ container_*.csv
 *_sysbench_*.csv
 *_fio_*.csv
 *_http_*.csv
-*_ycruncher_*.csv
+*_pi_*.csv
 *_stream_*.csv
 manifest.txt
 

@@ -325,16 +325,13 @@ prepare_stream_binary_once() {
     local worker_id=$2
     local array_size_mb=$3
 
-    # Preparation OUTSIDE the measurement: download stream.c and compile once per scenario.
+    # Preparation OUTSIDE the measurement: compile the vendored stream.c once per scenario.
     local array_elems=$((array_size_mb * 1024 * 1024 / 8))
     local cmd="
         set -e
         mkdir -p /opt/stream
         cd /opt/stream
-        if [ ! -f stream.c ]; then
-          wget -q -O stream.c https://www.cs.virginia.edu/stream/FTP/Code/stream.c >/dev/null 2>&1 || \
-          wget -q -O stream.c https://raw.githubusercontent.com/jeffhammond/STREAM/master/stream.c >/dev/null 2>&1
-        fi
+        # stream.c is vendored into the image (see images/stream/Dockerfile); no download
         test -f stream.c
         gcc -O3 -fopenmp -DSTREAM_ARRAY_SIZE=${array_elems} -DNTIMES=3 stream.c -o stream -lm
         test -x stream
