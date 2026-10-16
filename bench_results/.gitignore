@@ -1,0 +1,11 @@
+# Override the root .gitignore patterns -- include all benchmark results
+!enhanced_analysis/
+!*_analysis/
+!*.png
+!*.pdf
+!*.log
+!*.csv
+!*.tex
+!*.txt
+!manifest.txt
+!enhanced_analysis_report.txt

@@ -1,0 +1,23 @@
+# Python dependencies for statistical analysis
+
+# Data Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Statistical Analysis
+scipy>=1.10.0
+statsmodels>=0.14.0
+
+# Data Processing
+# jq is installed via Homebrew, not pip
+
+# Utilities
+# bc is installed via Homebrew, not pip
+
+# Ferramentas de Benchmark (installed via Homebrew)
+# brew install hyperfine sysbench wrk iperf3 bc
+# (Optional) brew install jq fio

@@ -1,0 +1,181 @@
+# Docker Desktop vs Apple container experiment configuration
+#
+# NATURE OF THIS FILE
+# This YAML is a DOCUMENTARY RECORD of the intended protocol -- it is not read
+# at runtime by any benchmark script, by the orchestrator
+# (src/benchmarks/run_experiment.sh), or by the analysis modules.
+# The values actually used for data collection come from:
+#   - defaults hardcoded in each src/benchmarks/run_*_performance.sh
+#     (e.g., SYSBENCH_IMAGE, PAUSE_*, ITERATIONS, WARMUP_ITERATIONS);
+#   - overrides via *_OVERRIDE environment variables exported by the
+#     orchestrator before invoking each script.
+# This file must remain IN SYNC with those defaults so that it serves as a
+# single source for human reading and auditing; any parameter change
+# must be applied in the scripts and reflected here.
+
+experiment:
+  name: "Docker Desktop vs Apple container Benchmark"
+  version: "1.0.0"
+  author: "Alessandra Pereira"
+  institution: "Universidade Federal de Pernambuco"
+  date: "2025-10-24"
+
+# Benchmark settings
+benchmark:
+  iterations: 30
+  warmup_iterations: 5
+  min_valid_iterations: 30  # 30 main iterations (warmup is additional)
+  alpha_level: 0.05
+  enable_randomization: true  # Randomization enabled by default
+  
+  # Pauses between tests (seconds), per the sampling methodology.
+  # The benchmark scripts hardcode these values as defaults and accept them
+  # via PAUSE_*_OVERRIDE; the orchestrator (run_experiment.sh) forwards them.
+  pauses:
+    startup: 2
+    cpu_memory: 2
+    http: 4
+    disk: 3
+    stream: 2
+    math: 2
+  
+  # Tested metrics (7 benchmarks)
+  metrics:
+    - startup_performance
+    - cpu_performance
+    - memory_performance
+    - http_performance
+    - disk_performance
+    - stream_performance
+    - math_performance
+  
+  # Per-metric settings
+  startup:
+    timeout: 60
+    sleep_duration: 60
+    # Current protocol: only startup_warm in run_startup_performance.sh (cached image).
+    types: [warm]
+  
+  cpu:
+    threads: [1, 2]
+    duration: 10  # seconds
+  
+  memory:
+    threads: [1, 2]
+    # Note: the *container* memory limit (8 GiB) is applied at runtime
+    # via the --memory flag of `container run` for Apple container; see
+    # CONTAINER_STANDARD_MEMORY in src/utils/benchmark_utils.sh. sysbench
+    # runs with its default (internal) --memory-size; the reported metric is throughput.
+
+  http:
+    duration: 10  # seconds
+    connections: 100
+    threads: 4
+    port: 8080  # base port; automatic sequential adjustment up to 50 attempts
+                # (HTTP_PORT_STRATEGY=auto, HTTP_PORT_MAX_TRIES=50 in run_http_performance.sh)
+  
+  disk:
+    size_mb: 1024  # test size in MB
+    io_types:
+      - sequential_read
+      - sequential_write
+      - random_read
+      - random_write
+  
+  stream:
+    array_size_mb: 512  # array size in MB (value actually used in the final run; script default = 512MB)
+    operations: [Copy, Scale, Add, Triad]
+    threads: [1, 2]
+  
+  math:
+    pi_digits: 10000  # digits of PI (10 thousand, per the methodology)
+    threads: [1, 2]   # bc is single-threaded per process; the 2t scenario runs 2 processes in parallel
+                      # Generated CSVs: docker_ycruncher_{1,2}t.csv and container_ycruncher_{1,2}t.csv
+                      # (the name "ycruncher" is historical -- the actual tool is bc)
+
+# Analysis settings
+analysis:
+  statistical_tests:
+    - mann_whitney_u
+    - anova
+    - t_test
+    
+  corrections:
+    - bonferroni
+    - fdr
+    
+  confidence_level: 0.95
+  
+  visualizations:
+    - performance_comparison
+    - statistical_dashboard
+    - startup_analysis
+    - cdf_boxen_analysis
+
+# System settings
+system:
+  platform: "macOS"
+  architecture: "ARM64"
+  min_macos_version: "26"
+  
+  # Versions are captured automatically at runtime
+  docker_version: "auto"  # Will be filled with: docker --version
+  apple_container_version: "auto"  # Will be filled with: container --version
+  python_version: "auto"  # Will be filled with: python3 --version
+  sysbench_version: "auto"  # Will be filled with: sysbench --version
+  wrk_version: "auto"  # Will be filled with: wrk --version
+  
+  # Docker/container images (digests are captured at runtime)
+  # IMPORTANT: Use fixed tags (not "latest") for reproducibility
+  images:
+    nginx:
+      tag: "stable"  # Fixed tag (nginx keeps "stable" as a specific version)
+      digest: "auto"  # Will be filled with: docker image inspect nginx:stable --format '{{.RepoDigests}}'
+    alpine:
+      tag: "3.19"  # Fixed tag for reproducibility (do NOT use "latest")
+      digest: "auto"  # Will be filled with: docker image inspect alpine:3.19 --format '{{.RepoDigests}}'
+    alpine_fio:
+      tag: "3.19"  # Same version as the base Alpine
+      digest: "auto"  # Used for Disk I/O tests
+    sysbench:
+      # Image built locally from Alpine 3.19 + apk add sysbench.
+      # Recipe: ensure_sysbench_image() in src/benchmarks/run_cpu_performance.sh.
+      # Same image (same digest) used on both runtimes to ensure validity.
+      image: "local/sysbench"
+      tag: "1.0.20-alpine3.19"
+      digest: "sha256:303a3f9850124e3ebf802ce7999cd1aee33fe0b26daf54e8a62443a4e8e03c84"  # image actually used in the study
+  
+  # Known limitations
+  limitations:
+    - pull_tests_disabled: "Rate limiting Docker Hub"
+    - rosetta_impact: "Minimal with ARM64 native Docker"
+    
+# Output settings
+output:
+  results_dir: "bench_results"  # Directory at the repo root (where scripts save)
+  analysis_dir: "enhanced_analysis"  # Subdirectory inside each experiment
+  figures_dir: "enhanced_analysis"  # Same directory as the analysis
+  
+  formats:
+    - csv
+    - png
+    - txt
+    
+  timestamp_format: "%Y%m%d-%H%M%S"
+
+# Override parameters (for quick/ultra-quick modes via environment variables)
+# These values can be overridden via ITERATIONS_OVERRIDE, MIN_VALID_OVERRIDE, etc.
+# Default values for quick/ultra-quick modes:
+quick_mode:
+  iterations: 5
+  min_valid_iterations: 5
+  stream_array_size_mb: 100
+  pi_digits: 3
+  fio_size_mb: 1024
+
+ultra_quick_mode:
+  iterations: 2
+  min_valid_iterations: 2
+  stream_array_size_mb: 50
+  pi_digits: 1
+  fio_size_mb: 100
