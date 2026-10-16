@@ -33,7 +33,11 @@ fi
 
 echo "==> Apple container (expected ${EXPECTED_CONTAINER_VERSION})"
 if ! command -v container >/dev/null 2>&1; then
-    echo "container CLI not found. Install release ${EXPECTED_CONTAINER_VERSION} from" >&2
+    echo "container CLI not found; installing via Homebrew"
+    brew install container || true
+fi
+if ! command -v container >/dev/null 2>&1; then
+    echo "container CLI could not be installed. Install release ${EXPECTED_CONTAINER_VERSION} from" >&2
     echo "  https://github.com/apple/container/releases/tag/${EXPECTED_CONTAINER_VERSION}" >&2
     missing=1
 else
@@ -42,11 +46,16 @@ else
     case "$installed" in
         *"${EXPECTED_CONTAINER_VERSION}"*) ;;
         *)
-            echo "WARNING: expected container ${EXPECTED_CONTAINER_VERSION}; results are only comparable" >&2
-            echo "         across runs with the same version." >&2
+            # Homebrew installs whatever is latest, so a mismatch is an error: results are only
+            # comparable across runs with the same version.
+            echo "ERROR: expected container ${EXPECTED_CONTAINER_VERSION}, found: ${installed}" >&2
+            echo "  Install release ${EXPECTED_CONTAINER_VERSION} from" >&2
+            echo "  https://github.com/apple/container/releases/tag/${EXPECTED_CONTAINER_VERSION}" >&2
+            missing=1
             ;;
     esac
 fi
+echo "Note: run 'container system start' once before the benchmarks (it may prompt to install the Linux kernel)."
 
 echo "==> Python environment"
 python3 -m venv venv

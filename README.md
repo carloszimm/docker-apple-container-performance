@@ -28,7 +28,7 @@ Exact versions of every component are recorded under `docs/system_info/` by `src
 bash src/utils/setup_environment.sh
 ```
 
-This installs the Homebrew tools, checks that Apple container is version 1.5.0, creates `venv/`, installs `requirements.txt`, and writes the exact resolved Python package versions to `requirements.lock`. Apple container itself must be installed manually from the [1.5.0 release](https://github.com/apple/container/releases/tag/1.5.0) (Homebrew currently ships an older version).
+This installs the Homebrew tools (including Apple container if it is not already installed), requires Apple container to be exactly version 1.5.0, creates `venv/`, installs `requirements.txt`, and writes the exact resolved Python package versions to `requirements.lock`. If Homebrew installs a different version than 1.5.0, install that version from the [1.5.0 release](https://github.com/apple/container/releases/tag/1.5.0) instead. Before the first run, start the container system once with `container system start`.
 
 The benchmark images are pinned to fixed tags (`alpine:3.24`, `nginx:stable`) and built from `src/benchmarks/images/` (fio, STREAM, sysbench). The STREAM source (`stream.c`, v5.10) is vendored in the repository, so no network access is needed at run time. Image digests are recorded in `docs/system_info/image_digests.md`.
 
