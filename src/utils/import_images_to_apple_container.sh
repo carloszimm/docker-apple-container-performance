@@ -122,7 +122,7 @@ import_image() {
     # Export from Docker
     print_info "  Exporting $image from Docker..."
     local err
-    if ! err=$(docker save "$image" -o "$tar_file" 2>&1); then
+    if ! err=$(docker save --platform linux/arm64 "$image" -o "$tar_file" 2>&1); then
         print_error "  ❌ Failed to export $image from Docker"
         print_detail "  docker save: ${err}"
         return 1
@@ -191,7 +191,7 @@ EOF
         # Export and import into Apple container
         local tar_file="$TMP_DIR/sysbench.tar"
         print_info "  Exporting from Docker..."
-        if docker save "$SYSBENCH_IMAGE" -o "$tar_file" &> /dev/null; then
+        if docker save --platform linux/arm64 "$SYSBENCH_IMAGE" -o "$tar_file" &> /dev/null; then
             print_info "  Importing into Apple container..."
             if container image load --input "$tar_file" &> /dev/null; then
                 print_success "  ✅ sysbench image imported into Apple container"

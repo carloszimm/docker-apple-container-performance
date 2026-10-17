@@ -186,7 +186,7 @@ ensure_math_image() {
             fi
             local tmp_tar="${OUTPUT_DIR:-.}/math_image.tar"
             print_info "Exporting from Docker and importing into Apple container (ensuring the same image)..."
-            if docker save ${MATH_IMAGE} -o "${tmp_tar}" >/dev/null 2>&1; then
+            if docker save --platform linux/arm64 ${MATH_IMAGE} -o "${tmp_tar}" >/dev/null 2>&1; then
                 if container image load --input "${tmp_tar}" >/dev/null 2>&1; then
                     print_success "Image ${MATH_IMAGE} imported into Apple container (same as Docker)"
                     rm -f "${tmp_tar}" >/dev/null 2>&1 || true

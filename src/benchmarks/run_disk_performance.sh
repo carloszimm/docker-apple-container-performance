@@ -203,7 +203,7 @@ ensure_fio_image() {
         ensure_fio_image "docker"
         local tmp_tar="${OUTPUT_DIR:-.}/fio_image.tar"
         print_info "Exporting from Docker and importing into Apple container (same image, methodological rigor)..."
-        if docker save "${FIO_IMAGE}" -o "${tmp_tar}" >/dev/null 2>&1; then
+        if docker save --platform linux/arm64 "${FIO_IMAGE}" -o "${tmp_tar}" >/dev/null 2>&1; then
             if container image load --input "${tmp_tar}" >/dev/null 2>&1; then
                 rm -f "${tmp_tar}" >/dev/null 2>&1 || true
                 print_success "Image ${FIO_IMAGE} imported into Apple container (same as Docker)"

@@ -641,7 +641,7 @@ if [ "$DOCKER_RUNNING" = true ]; then
                 tmp_tar="/tmp/${image//\//_}.tar"
                 tmp_tar="${tmp_tar//:/_}"
                 
-                if docker save "$image" -o "$tmp_tar" &> /dev/null; then
+                if docker save --platform linux/arm64 "$image" -o "$tmp_tar" &> /dev/null; then
                     if container image load --input "$tmp_tar" &> /dev/null; then
                         print_success "    ✓ $image: Imported into Apple container"
                         rm -f "$tmp_tar" &> /dev/null || true
