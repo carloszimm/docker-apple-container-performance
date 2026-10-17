@@ -121,16 +121,19 @@ import_image() {
     
     # Export from Docker
     print_info "  Exporting $image from Docker..."
-    if ! docker save "$image" -o "$tar_file" &> /dev/null; then
+    local err
+    if ! err=$(docker save "$image" -o "$tar_file" 2>&1); then
         print_error "  ❌ Failed to export $image from Docker"
+        print_detail "  docker save: ${err}"
         return 1
     fi
     print_success "  ✅ $image exported from Docker"
     
     # Import into Apple container
     print_info "  Importing $image into Apple container..."
-    if ! container image load --input "$tar_file" &> /dev/null; then
+    if ! err=$(container image load --input "$tar_file" 2>&1); then
         print_error "  ❌ Failed to import $image into Apple container"
+        print_detail "  container image load: ${err}"
         rm -f "$tar_file" &> /dev/null || true
         return 1
     fi
