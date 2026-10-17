@@ -132,7 +132,8 @@ print_step "3. Docker Images Verification"
 echo ""
 
 # Registry images — can be obtained via docker pull
-REGISTRY_IMAGES=("alpine:3.24" "nginx:stable")
+source "${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/config/image_pins.sh"
+REGISTRY_IMAGES=("$ALPINE_TAG" "$NGINX_TAG")
 # Local images — must be built before the experiment (the sysbench image local/sysbench:1.0.20-alpine3.24
 # is built on demand by the CPU and memory scripts; see src/benchmarks/images/sysbench/Dockerfile)
 LOCAL_IMAGES=("bench-fio:alpine-3.24")
@@ -141,6 +142,20 @@ MISSING_IMAGES=()
 for image in "${REGISTRY_IMAGES[@]}"; do
     if docker image inspect "$image" &> /dev/null; then
         check_pass "Docker image available: ${image}"
+        # The tag must point at the pinned image (config/image_pins.sh)
+        case "$image" in
+            "$ALPINE_TAG") pinned="$ALPINE_DIGEST" ;;
+            "$NGINX_TAG") pinned="$NGINX_DIGEST" ;;
+            *) pinned="" ;;
+        esac
+        if [ -n "$pinned" ]; then
+            if docker image inspect "$image" --format '{{join .RepoDigests " "}}' 2>/dev/null | grep -q "$pinned"; then
+                check_pass "Digest matches pin: ${image}"
+            else
+                check_fail "Digest of ${image} does not match the pinned ${pinned}"
+                print_detail "  Run: bash src/utils/setup_environment.sh"
+            fi
+        fi
     else
         check_fail "Docker image missing: ${image}"
         MISSING_IMAGES+=("$image")
@@ -150,7 +165,7 @@ done
 if [ ${#MISSING_IMAGES[@]} -gt 0 ]; then
     print_detail "To download missing images:"
     for img in "${MISSING_IMAGES[@]}"; do
-        print_detail "  docker pull ${img}"
+        print_detail "  (bash src/utils/setup_environment.sh pulls the pinned images)"
     done
 fi
 

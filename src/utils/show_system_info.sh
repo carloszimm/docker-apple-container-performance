@@ -141,7 +141,7 @@ echo ""
 # DOCKER IMAGES
 # =============================================================================
 print_info "Essential Docker Images:"
-REQUIRED_IMAGES=("alpine:3.24" "nginx:stable")
+REQUIRED_IMAGES=("alpine:3.24" "nginx:1.30.6")
 for image in "${REQUIRED_IMAGES[@]}"; do
     # Check whether Docker is running before trying to check images
     if docker info &> /dev/null; then

@@ -65,7 +65,7 @@ echo ""
 # If a prebuilt image is needed, it will be built locally
 IMAGES=(
     "alpine:3.24"
-    "nginx:stable"
+    "nginx:1.30.6"
 )
 
 # Optional image that will be built locally if needed
@@ -172,7 +172,7 @@ build_sysbench_image() {
     mkdir -p "$build_dir"
     
     cat > "$build_dir/Dockerfile" << 'EOF'
-FROM alpine:3.24
+FROM alpine:3.24@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
 RUN apk add --no-cache sysbench
 ENTRYPOINT ["/usr/bin/sysbench"]
 LABEL version="1.0.20"

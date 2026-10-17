@@ -616,7 +616,7 @@ if [ "$DOCKER_RUNNING" = true ]; then
         # Note: sysbench does not need a pre-built image - it is installed dynamically
         IMAGES=(
             "alpine:3.24"
-            "nginx:stable"
+            "nginx:1.30.6"
         )
         
         for image in "${IMAGES[@]}"; do
@@ -661,7 +661,7 @@ if [ "$DOCKER_RUNNING" = true ]; then
     else
         print_step "[5/9] Validating Images"
         # Validation mode: check whether images exist
-        IMAGES_TO_CHECK=("alpine:3.24" "nginx:stable")
+        IMAGES_TO_CHECK=("alpine:3.24" "nginx:1.30.6")
         MISSING_COUNT=0
         for image in "${IMAGES_TO_CHECK[@]}"; do
             if ! docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -q "^${image}$"; then
@@ -710,7 +710,7 @@ The import process converts the image from Docker format to OCI, creating a new 
 **Identity Guarantees:**
 - ✅ Both images were pulled from Docker Hub with the same fixed tag
 - ✅ Direct import from Docker into Apple container (no modifications)
-- ✅ Use of fixed tags (`alpine:3.24`, `nginx:stable`) instead of `latest`
+- ✅ Use of fixed tags (`alpine:3.24`, `nginx:1.30.6`) instead of `latest`
 
 
 ---
@@ -722,7 +722,7 @@ EOF
         # Note: sysbench does not need a pre-built image - it is installed dynamically
         IMAGES=(
             "alpine:3.24"
-            "nginx:stable"
+            "nginx:1.30.6"
         )
 
         for image in "${IMAGES[@]}"; do
@@ -857,7 +857,7 @@ except:
             echo "| Image | Docker | Apple container | Status |"
             echo "|--------|--------|-----------------|--------|"
             echo "| \`alpine:3.24\` | ✅ Available | ✅ Available | ✅ Imported |"
-            echo "| \`nginx:stable\` | ✅ Available | ✅ Available | ✅ Imported |"
+            echo "| \`nginx:1.30.6\` | ✅ Available | ✅ Available | ✅ Imported |"
             echo "| \`sysbench\` | ⚙️ Installed dynamically | ⚙️ Installed dynamically | ✅ Same process |"
             echo ""
             echo "**Conclusion:** All required images are available and configured for a fair comparison between Docker and Apple container."
@@ -941,10 +941,10 @@ EOF
         echo "### Nginx"
         echo ""
         echo "**Docker:**"
-        docker run --rm nginx:stable nginx -v 2>&1 | sed 's/^/  - /' || echo "  - Not available"
+        docker run --rm nginx:1.30.6 nginx -v 2>&1 | sed 's/^/  - /' || echo "  - Not available"
         echo ""
         echo "**Apple container:**"
-        container run --rm nginx:stable nginx -v 2>&1 | sed 's/^/  - /' || echo "  - Not available"
+        container run --rm nginx:1.30.6 nginx -v 2>&1 | sed 's/^/  - /' || echo "  - Not available"
         echo ""
         } >> "$CONTAINER_ENV_FILE"
 
@@ -1181,10 +1181,10 @@ if [ "$DOCKER_RUNNING" = true ] && [ "$APPLE_CONTAINER_RUNNING" = true ]; then
         container run --rm alpine:3.24 sh -c "apk add --no-cache sysbench >/dev/null 2>&1 && sysbench --version" 2>/dev/null || echo "Not available"
         echo ""
         echo "=== Nginx (Docker) ==="
-        docker run --rm nginx:stable nginx -v 2>&1 || echo "Not available"
+        docker run --rm nginx:1.30.6 nginx -v 2>&1 || echo "Not available"
         echo ""
         echo "=== Nginx (Apple container) ==="
-        container run --rm nginx:stable nginx -v 2>&1 || echo "Not available"
+        container run --rm nginx:1.30.6 nginx -v 2>&1 || echo "Not available"
     } > "$SNAPSHOT_DIR/benchmark_tools_container.txt" 2>/dev/null || true
 fi
 
@@ -1276,7 +1276,7 @@ fi
 # Check images in Apple container (direct check)
 if [ "$DOCKER_RUNNING" = true ] && [ "$APPLE_CONTAINER_RUNNING" = true ]; then
     # Directly check whether the images exist in Apple container
-    IMAGES_TO_CHECK=("alpine:3.24" "nginx:stable")
+    IMAGES_TO_CHECK=("alpine:3.24" "nginx:1.30.6")
     MISSING_IMAGES=()
     
     for image in "${IMAGES_TO_CHECK[@]}"; do

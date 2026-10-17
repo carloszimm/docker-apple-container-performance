@@ -133,7 +133,7 @@ PAUSE_HTTP=${PAUSE_HTTP_OVERRIDE:-4}  # Default: 4s, can be overridden
 # Rigor policy: invariant workload (no server fallback)
 # - Never replace nginx with another server (e.g., python http.server), so the workload does not change
 # - If the server fails to start or become ready, retry up to a limit and record the reason
-HTTP_IMAGE="nginx:stable"
+HTTP_IMAGE="nginx:1.30.6"
 HTTP_MAX_RETRIES_PER_ITERATION=${HTTP_MAX_RETRIES_PER_ITERATION:-3}
 HTTP_STARTUP_TIMEOUT_SECONDS=${HTTP_STARTUP_TIMEOUT_SECONDS:-10}
 
@@ -240,7 +240,7 @@ estimate_sample_size_http_pretest() {
             continue
         fi
         
-        server_pid=$(docker run -d -p "${http_port}:80" nginx:stable 2>/dev/null)
+        server_pid=$(docker run -d -p "${http_port}:80" nginx:1.30.6 2>/dev/null)
         if [ -n "$server_pid" ]; then
             sleep 3
             result=$(wrk -t4 -c100 -d5s "http://localhost:${http_port}" 2>/dev/null | grep "Requests/sec" | awk '{print $2}')
@@ -590,7 +590,7 @@ run_http_benchmark() {
         local server_pid=""
         local http_port=""
         
-        # Invariant workload: always nginx:stable, no fallback to another server.
+        # Invariant workload: always nginx:1.30.6, no fallback to another server.
         # Retry policy: up to HTTP_MAX_RETRIES_PER_ITERATION attempts per iteration.
         local attempt=1
         while [ "$attempt" -le "$HTTP_MAX_RETRIES_PER_ITERATION" ]; do

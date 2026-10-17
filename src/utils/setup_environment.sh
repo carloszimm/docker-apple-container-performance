@@ -14,6 +14,8 @@ EXPECTED_CONTAINER_VERSION="1.5.0"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
+# shellcheck disable=SC1091
+source config/image_pins.sh
 
 echo "==> Homebrew tools"
 if ! command -v brew >/dev/null 2>&1; then
@@ -29,6 +31,21 @@ if ! command -v docker >/dev/null 2>&1; then
     missing=1
 else
     docker --version
+fi
+
+if command -v docker >/dev/null 2>&1; then
+    echo "==> Pinned base images (pulled by digest, tagged with the names the scripts use)"
+    for pin in "${ALPINE_TAG}|${ALPINE_DIGEST}" "${NGINX_TAG}|${NGINX_DIGEST}"; do
+        tag="${pin%%|*}"
+        digest="${pin##*|}"
+        repo="${tag%%:*}"
+        if docker pull "${repo}@${digest}" >/dev/null && docker tag "${repo}@${digest}" "$tag"; then
+            echo "${tag} -> ${repo}@${digest}"
+        else
+            echo "ERROR: could not pull ${repo}@${digest}" >&2
+            missing=1
+        fi
+    done
 fi
 
 echo "==> Apple container (expected ${EXPECTED_CONTAINER_VERSION})"

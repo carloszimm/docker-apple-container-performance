@@ -422,8 +422,8 @@ generate_manifest() {
     local wrk_ver=$(wrk --version 2>/dev/null || echo "N/A")
     
     # Capture image digests
-    local nginx_digest_docker=$(get_image_digest "docker" "nginx:stable")
-    local nginx_digest_container=$(get_image_digest "container" "nginx:stable")
+    local nginx_digest_docker=$(get_image_digest "docker" "nginx:1.30.6")
+    local nginx_digest_container=$(get_image_digest "container" "nginx:1.30.6")
     local alpine_digest_docker=$(get_image_digest "docker" "alpine:3.24")
     local alpine_digest_container=$(get_image_digest "container" "alpine:3.24")
     
@@ -456,9 +456,9 @@ sysbench: ${sysbench_ver}
 wrk: ${wrk_ver}
 
 === IMAGES USED ===
-nginx:stable (Docker):
+nginx:1.30.6 (Docker):
   Digest: ${nginx_digest_docker}
-nginx:stable (Apple container):
+nginx:1.30.6 (Apple container):
   Digest: ${nginx_digest_container}
 alpine:3.24 (Docker):
   Digest: ${alpine_digest_docker}

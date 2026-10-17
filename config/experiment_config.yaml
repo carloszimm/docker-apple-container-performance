@@ -128,11 +128,11 @@ system:
   # IMPORTANT: Use fixed tags (not "latest") for reproducibility
   images:
     nginx:
-      tag: "stable"  # Fixed tag (nginx keeps "stable" as a specific version)
-      digest: "auto"  # Will be filled with: docker image inspect nginx:stable --format '{{.RepoDigests}}'
+      tag: "1.30.6"  # Exact nginx version (pinned by digest, see config/image_pins.sh)
+      digest: "sha256:eb1c896deef834f4e056829fd6dadac8305501f16cc71ba65fb252c8d0aa168e"
     alpine:
-      tag: "3.24"  # Fixed tag for reproducibility (do NOT use "latest")
-      digest: "auto"  # Will be filled with: docker image inspect alpine:3.24 --format '{{.RepoDigests}}'
+      tag: "3.24"  # Pinned by digest, see config/image_pins.sh
+      digest: "sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6"
     alpine_fio:
       tag: "3.24"  # Same version as the base Alpine
       digest: "auto"  # Used for Disk I/O tests
