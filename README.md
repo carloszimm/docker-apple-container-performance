@@ -38,6 +38,8 @@ Check that the environment is ready before running:
 bash src/utils/verify_experiment_requirements.sh
 ```
 
+Setup choices that affect replicability (pinned images, vendored STREAM source, image transfer) are described in [`docs/methodology_notes.md`](docs/methodology_notes.md).
+
 ## Running the benchmarks
 
 ### Full experiment (recommended)
