@@ -684,6 +684,7 @@ main() {
     check_dependencies sysbench
     check_rosetta
     check_apple_container auto_start
+    init_container_safety
     
     # Set up experiment
     setup_output_directory "memory_performance"

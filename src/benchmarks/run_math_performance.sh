@@ -27,11 +27,19 @@ set -euo pipefail
 #       Default: 2
 #       Example: PAUSE_MATH_OVERRIDE=3 ./run_math_performance.sh
 #
+#   MATH_TIMEOUT_SECONDS
+#       Maximum time for one iteration (one container run). An iteration that exceeds
+#       it is killed and recorded as invalid, so the benchmark can never hang.
+#       Default: 600
+#       Example: MATH_TIMEOUT_SECONDS=900 ./run_math_performance.sh
+#
 #   PI_DIGITS
 #       Number of PI digits to compute (default: 10000 = 10 thousand).
 #       NOTE: Value chosen pragmatically to balance execution time and the
 #       ability to detect differences. There is no specific academic reference
 #       that justifies this exact number.
+#       Each "thread" is one bc process; the 2-thread test runs two processes in parallel
+#       inside the same container (one per thread), each computing PI_DIGITS digits.
 #       Estimated time: ~93s per run (30 iterations × 4 tests ≈ 3 hours total)
 #       Example: PI_DIGITS=5000 ./run_math_performance.sh (for a faster test)
 #
@@ -84,7 +92,8 @@ set -euo pipefail
 # DEPENDENCIES:
 #   - Docker Desktop installed and running
 #   - Apple container installed and running
-#   - alpine:3.24 image available (bc will be installed in the container)
+#   - bench-math:alpine-3.24 image (Alpine 3.24 + bc), built automatically from
+#     src/benchmarks/images/math/Dockerfile
 #
 # OUTPUT:
 #   Results are saved to: bench_results/math_performance_<timestamp>/
@@ -146,8 +155,10 @@ MIN_SAMPLE_SIZE_RECOMMENDED=$(calculate_min_sample_size "$CONFIDENCE_LEVEL")
 # Check whether the number of iterations meets the recommended minimum
 check_sample_size "$ITERATIONS" "$CONFIDENCE_LEVEL"
 
-# Base image for compiling Y-cruncher (METHODOLOGICAL RIGOR: use a fixed tag, not latest)
-MATH_IMAGE=${MATH_IMAGE:-alpine:3.24}
+# Benchmark image: Alpine + bc, built from images/math/Dockerfile (bc is NOT installed inside the
+# measured runs). METHODOLOGICAL RIGOR: fixed tag, same image on both runtimes.
+MATH_IMAGE=${MATH_IMAGE:-bench-math:alpine-3.24}
+MATH_TIMEOUT_SECONDS=${MATH_TIMEOUT_SECONDS:-600}
 MATH_DIGEST=""
 
 # Number of PI digits to compute (default: 10,000 = 1e4)
@@ -165,10 +176,14 @@ ensure_math_image() {
     local digest=""
 
     if [ "$runtime" = "docker" ]; then
-        if ! docker image ls --format '{{.Repository}}:{{.Tag}}' | grep -q "${MATH_IMAGE}"; then
-            print_warning "Image ${MATH_IMAGE} not found in Docker. Pulling..."
-            if ! docker pull ${MATH_IMAGE} >/dev/null 2>&1; then
-                print_error "Failed to pull the image"
+        if ! docker image inspect "${MATH_IMAGE}" >/dev/null 2>&1; then
+            local dockerfile_dir="${SCRIPT_DIR}/images/math"
+            print_step "Building benchmark image (bc): ${MATH_IMAGE}"
+            local build_out
+            if ! build_out=$(docker build -t "${MATH_IMAGE}" -f "${dockerfile_dir}/Dockerfile" "${dockerfile_dir}" 2>&1); then
+                print_error "Failed to build image ${MATH_IMAGE}"
+                print_detail "docker build output (last lines):"
+                echo "$build_out" | tail -n 15
                 return 1
             fi
         fi
@@ -180,8 +195,8 @@ ensure_math_image() {
     else
         if ! container image ls | awk '{print $1":"$2}' | grep -q "${MATH_IMAGE}"; then
             print_warning "Image ${MATH_IMAGE} not found in Apple container. Checking Docker..."
-            if ! docker image ls --format '{{.Repository}}:{{.Tag}}' | grep -q "${MATH_IMAGE}"; then
-                print_warning "Image not present in Docker. Pulling..."
+            if ! docker image inspect "${MATH_IMAGE}" >/dev/null 2>&1; then
+                print_warning "Image not present in Docker. Building..."
                 ensure_math_image "docker"
             fi
             local tmp_tar="${OUTPUT_DIR:-.}/math_image.tar"
@@ -212,6 +227,39 @@ ensure_math_image() {
     fi
 }
 
+# Command executed inside the container: one bc process per "thread", all started in parallel;
+# the command fails if any of them fails.
+math_workload_cmd() {
+    local threads=$1
+    echo "pids=''; i=0; while [ \$i -lt ${threads} ]; do (echo 'scale=${PI_DIGITS}; 4*a(1)' | bc -l >/dev/null) & pids=\"\$pids \$!\"; i=\$((i+1)); done; rc=0; for p in \$pids; do wait \$p || rc=1; done; exit \$rc"
+}
+
+# Runs one PI computation (a complete container run: start, compute, remove) with a timeout.
+# Returns the exit status of the run (124 = killed by the timeout). A failed or timed-out run
+# is never counted as a valid measurement by the callers.
+run_pi_once() {
+    local runtime=$1
+    local threads=$2
+    local name=$3
+    local cmd
+    cmd=$(math_workload_cmd "$threads")
+    local rc=0
+
+    if [ "$runtime" = "docker" ]; then
+        run_with_timeout "$MATH_TIMEOUT_SECONDS" docker run --rm --name "$name" "${MATH_IMAGE}" sh -c "$cmd" >/dev/null 2>&1 || rc=$?
+    else
+        run_with_timeout "$MATH_TIMEOUT_SECONDS" container run --rm --name "$name" \
+            --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" \
+            "${MATH_IMAGE}" sh -c "$cmd" >/dev/null 2>&1 || rc=$?
+    fi
+
+    if [ "$rc" -ne 0 ]; then
+        # Make sure nothing is left behind (a timed-out client does not always remove the container)
+        force_remove_container "$runtime" "$name"
+    fi
+    return "$rc"
+}
+
 # Function to run warmup iterations (discarded)
 run_warmup_math() {
     local runtime=$1
@@ -227,25 +275,12 @@ run_warmup_math() {
     for w in $(seq 1 $warmup_count); do
         print_info "Warmup ${w}/${warmup_count} - ${runtime} PI ${threads} threads"
         
-        if [ "$runtime" = "docker" ]; then
-            docker run --rm ${MATH_IMAGE} sh -c "
-                apk add --no-cache bc >/dev/null 2>&1
-                echo \"scale=${PI_DIGITS}; 4*a(1)\" | timeout 270 bc -l >/dev/null 2>&1
-            " > /dev/null 2>&1
-        elif [ "$runtime" = "container" ]; then
-            # Use set +e to prevent the script from stopping if container run fails
-            set +e
-            run_container_with_standard_resources "container" "${MATH_IMAGE}" sh -c "
-                apk add --no-cache bc >/dev/null 2>&1
-                echo \"scale=${PI_DIGITS}; 4*a(1)\" | timeout 270 bc -l >/dev/null 2>&1
-            " > /dev/null 2>&1
-            local warmup_exit_code=$?
-            set -e
-            if [ $warmup_exit_code -ne 0 ]; then
-                print_warning "  ⚠️  Warmup ${w}/${warmup_count} failed (exit code: $warmup_exit_code) - continuing..."
-            fi
+        local warmup_rc=0
+        run_pi_once "$runtime" "$threads" "bench-math-warmup-${runtime}-$$" || warmup_rc=$?
+        if [ $warmup_rc -ne 0 ]; then
+            print_warning "  ⚠️  Warmup ${w}/${warmup_count} failed (exit code: ${warmup_rc}$([ $warmup_rc -eq 124 ] && echo ', timeout')) - continuing..."
         fi
-        
+
         # Pause between warmup iterations
         sleep $PAUSE_MATH
     done
@@ -290,58 +325,31 @@ run_math_benchmark() {
         local result=""
         local throughput=""
         
-        # Run the PI calculation using bc inside the container
-        # Measure execution time using date before and after (more accurate than time inside the container)
-        if [ "$runtime" = "docker" ]; then
-            local start_time=$(date +%s.%N)
-            # Run the PI calculation and discard output (we only want to measure time)
-            # Note: This calculation may take ~93s for 10,000 digits
-            docker run --rm ${MATH_IMAGE} sh -c "
-                apk add --no-cache bc >/dev/null 2>&1
-                echo \"scale=${PI_DIGITS}; 4*a(1)\" | timeout 270 bc -l >/dev/null 2>&1
-            " >/dev/null 2>&1
-            local end_time=$(date +%s.%N)
+        # Run the PI calculation (bc is preinstalled in the image, so the measured interval contains
+        # only container start-up + computation + removal). Time is measured with date before and after
+        # the run, outside the container.
+        local start_time=$(date +%s.%N)
+        local run_rc=0
+        run_pi_once "$runtime" "$threads" "bench-math-${runtime}-$$-${i}" || run_rc=$?
+        local end_time=$(date +%s.%N)
 
-            # Compute execution time
-            result=$(echo "$end_time - $start_time" | bc -l 2>/dev/null || echo "0")
-            
-            # Compute throughput (digits per second)
-            if [ -n "$result" ] && [ "$result" != "0" ] && [ $(echo "$result > 0" | bc -l) -eq 1 ]; then
-                throughput=$(echo "scale=2; ${PI_DIGITS} / $result" | bc -l 2>/dev/null || echo "0")
+        if [ "$run_rc" -ne 0 ]; then
+            # Failed or timed-out run: invalid iteration, never recorded as a measurement
+            result="0"
+            if [ "$run_rc" -eq 124 ]; then
+                print_warning "  Iteration ${i} timed out after ${MATH_TIMEOUT_SECONDS}s (killed) - invalid"
+            else
+                print_warning "  Iteration ${i} failed with exit code ${run_rc} - invalid"
             fi
-            
-        elif [ "$runtime" = "container" ]; then
-            local start_time=$(date +%s.%N)
-            # Run the PI calculation and discard output (we only want to measure time)
-            # Use standardized resources for a fair comparison
-            # Note: This calculation may take ~93s for 10,000 digits
-            # Use set +e to capture the exit code without stopping the script
-            set +e
-            run_container_with_standard_resources "container" "${MATH_IMAGE}" sh -c "
-                apk add --no-cache bc >/dev/null 2>&1
-                echo \"scale=${PI_DIGITS}; 4*a(1)\" | timeout 270 bc -l >/dev/null 2>&1
-            " >/dev/null 2>&1
-            local container_exit_code=$?
-            set -e
-            local end_time=$(date +%s.%N)
-            
-            # If container run failed, mark as invalid
-            if [ $container_exit_code -ne 0 ]; then
-                result="0"
-                if [ "$i" -le 3 ]; then
-                    print_warning "  [DEBUG] Container run failed with exit code: $container_exit_code"
-                fi
-            fi
-            
-            # Compute execution time
+        else
             result=$(echo "$end_time - $start_time" | bc -l 2>/dev/null || echo "0")
-            
-            # Compute throughput (digits per second)
+
+            # Aggregate throughput: total digits computed per second (threads x PI_DIGITS / time)
             if [ -n "$result" ] && [ "$result" != "0" ] && [ $(echo "$result > 0" | bc -l) -eq 1 ]; then
-                throughput=$(echo "scale=2; ${PI_DIGITS} / $result" | bc -l 2>/dev/null || echo "0")
+                throughput=$(echo "scale=2; ${PI_DIGITS} * ${threads} / $result" | bc -l 2>/dev/null || echo "0")
             fi
         fi
-        
+
         # Basic validation (reasonable numeric result)
         if [[ "$result" =~ ^[0-9]+\.?[0-9]*$ ]] && [ $(echo "$result > 0" | bc -l) -eq 1 ]; then
             echo "${i},${result},${throughput:-0}" >> "$output_file"
@@ -431,10 +439,12 @@ $(ls -la "${OUTPUT_DIR}")
 === CONFIGURATION ===
 - Iterations: ${ITERATIONS}
 - Statistical validation: Minimum ${MIN_VALID_ITERATIONS} valid iterations
-- Test: PI calculation (2 thread configurations per runtime)
+- Test: PI calculation (2 parallel-process configurations per runtime)
 - Runtimes: Docker Desktop, Apple container
 - PI digits: ${PI_DIGITS}
-- Threads: 1 and 2
+- Threads: 1 and 2 (number of parallel bc processes in one container)
+- Throughput: threads x PI_DIGITS / time (aggregate digits per second)
+- Per-iteration timeout: ${MATH_TIMEOUT_SECONDS}s (timed-out or failed iterations are invalid)
 - Method: bc (Basic Calculator) for PI calculation
 - Warmup iterations: ${WARMUP_ITERATIONS}
 
@@ -449,7 +459,7 @@ $(ls -la "${OUTPUT_DIR}")
 Image: ${MATH_IMAGE}
 Digest: ${MATH_DIGEST:-N/A (not captured)}
 Note: Identical image guaranteed on both runtimes for experimental validity
-Tool: bc (Basic Calculator) for PI calculation
+Tool: bc (Basic Calculator), preinstalled in the image (no package installation during measurements)
 
 === METHODOLOGY ===
 - Measurement of mathematical computation performance
@@ -481,6 +491,7 @@ main() {
     check_dependencies
     check_rosetta
     check_apple_container auto_start
+    init_container_safety
     
     # Set up experiment
     setup_output_directory "math_performance"

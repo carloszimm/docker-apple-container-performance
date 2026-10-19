@@ -847,3 +847,243 @@ log_to_file() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message" >> "$log_file"
 }
 
+
+# =============================================================================
+# CONTAINER SAFETY: TIMEOUTS, STRAY CONTAINERS, CLEANUP, PORT PREFLIGHT
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# run_with_timeout
+# -----------------------------------------------------------------------------
+# Runs a command and kills it if it does not finish within the given time.
+# macOS has no `timeout` command, so this is implemented with a background
+# watcher. The command's completion is detected through `wait`, so no polling
+# delay is added to the measured duration.
+#
+# Parameters:
+#   $1 - Timeout in seconds
+#   $@ - Command and arguments
+#
+# Returns:
+#   The command's exit status, or 124 if it was killed because of the timeout.
+#
+# Example:
+#   run_with_timeout 600 docker run --rm alpine:3.24 true
+# -----------------------------------------------------------------------------
+run_with_timeout() {
+    local timeout_seconds=$1
+    shift
+
+    local flag_file
+    flag_file=$(mktemp "${TMPDIR:-/tmp}/bench_timeout.XXXXXX")
+    rm -f "$flag_file"
+
+    "$@" &
+    local cmd_pid=$!
+
+    (
+        sleep "$timeout_seconds" &
+        local sleep_pid=$!
+        trap 'kill "$sleep_pid" 2>/dev/null; exit 0' TERM
+        wait "$sleep_pid"
+        touch "$flag_file"
+        kill -TERM "$cmd_pid" 2>/dev/null
+        # Grace period; interruptible so the caller never waits for it
+        sleep 5 &
+        sleep_pid=$!
+        wait "$sleep_pid"
+        kill -KILL "$cmd_pid" 2>/dev/null
+    ) &
+    local watcher_pid=$!
+
+    local rc=0
+    wait "$cmd_pid" 2>/dev/null || rc=$?
+
+    kill -TERM "$watcher_pid" 2>/dev/null || true
+    wait "$watcher_pid" 2>/dev/null || true
+
+    if [ -e "$flag_file" ]; then
+        rm -f "$flag_file"
+        return 124
+    fi
+    return "$rc"
+}
+
+# -----------------------------------------------------------------------------
+# force_remove_container
+# -----------------------------------------------------------------------------
+# Stops and removes a container by name or ID, ignoring errors.
+#
+# Parameters:
+#   $1 - Runtime ("docker" or "container")
+#   $2 - Container name or ID
+# -----------------------------------------------------------------------------
+force_remove_container() {
+    local runtime=$1
+    local target=$2
+
+    if [ "$runtime" = "docker" ]; then
+        docker rm -f "$target" >/dev/null 2>&1 || true
+    else
+        container stop "$target" >/dev/null 2>&1 || true
+        container rm "$target" >/dev/null 2>&1 || true
+    fi
+}
+
+# Lists the IDs of running containers, one per line (never fails)
+list_running_containers() {
+    local runtime=$1
+
+    if [ "$runtime" = "docker" ]; then
+        docker ps -q 2>/dev/null || true
+    else
+        # The first column of `container ls` is the ID; skip the header line
+        container ls 2>/dev/null | tail -n +2 | awk '{print $1}' || true
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# init_container_safety
+# -----------------------------------------------------------------------------
+# To be called once from main() of every benchmark script, after the runtime
+# checks. It:
+#   1. Refuses to start if containers are already running on either runtime
+#      (idle containers compete for memory and CPU and contaminate results).
+#      Set ALLOW_STRAY_CONTAINERS=true to override; those containers are then
+#      left untouched.
+#   2. Installs a cleanup handler (EXIT, INT, TERM) that stops and removes every
+#      container started after this point, so an abort or a failure never
+#      leaves benchmark containers running.
+# -----------------------------------------------------------------------------
+BENCH_BASELINE_DOCKER=""
+BENCH_BASELINE_CONTAINER=""
+
+init_container_safety() {
+    BENCH_BASELINE_DOCKER=$(list_running_containers docker)
+    BENCH_BASELINE_CONTAINER=$(list_running_containers container)
+
+    if [ -n "$BENCH_BASELINE_DOCKER$BENCH_BASELINE_CONTAINER" ]; then
+        if [ "${ALLOW_STRAY_CONTAINERS:-false}" = "true" ]; then
+            print_warning "Containers are already running (ALLOW_STRAY_CONTAINERS=true): they will be left untouched, but they may affect the results"
+        else
+            print_error "Containers are already running; they would interfere with the measurements:"
+            [ -n "$BENCH_BASELINE_DOCKER" ] && echo "$BENCH_BASELINE_DOCKER" | sed 's/^/    docker:     /'
+            [ -n "$BENCH_BASELINE_CONTAINER" ] && echo "$BENCH_BASELINE_CONTAINER" | sed 's/^/    container:  /'
+            print_info "Stop them first (e.g. bash src/utils/reset_benchmark_environment.sh) or set ALLOW_STRAY_CONTAINERS=true"
+            exit 1
+        fi
+    fi
+
+    trap cleanup_benchmark_containers EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+}
+
+# Removes the containers that were not running when init_container_safety ran
+cleanup_benchmark_containers() {
+    local exit_code=$?
+    trap - EXIT INT TERM
+
+    local id
+    for id in $(list_running_containers docker); do
+        case "$BENCH_BASELINE_DOCKER" in *"$id"*) continue ;; esac
+        force_remove_container docker "$id"
+    done
+    for id in $(list_running_containers container); do
+        case "$BENCH_BASELINE_CONTAINER" in *"$id"*) continue ;; esac
+        force_remove_container container "$id"
+    done
+
+    return "$exit_code"
+}
+
+# -----------------------------------------------------------------------------
+# check_published_port_works
+# -----------------------------------------------------------------------------
+# Starts a throwaway nginx container with a published port and verifies that the
+# host can reach it with both curl and wrk. The first time a published port is
+# used, macOS may show a "Local Network" permission prompt for the terminal /
+# container / wrk binaries; if nobody approves it, every HTTP request fails.
+# Running this while attended triggers the prompts up front.
+#
+# Parameters:
+#   $1 - Runtime ("docker" or "container")
+#   $2 - Seconds to wait for a response (optional, default 90)
+#
+# Environment:
+#   PREFLIGHT_IMAGE - image to serve (default: nginx:1.30.6)
+#
+# Returns:
+#   0 if the port is reachable (curl and wrk), 1 otherwise
+# -----------------------------------------------------------------------------
+check_published_port_works() {
+    local runtime=$1
+    local wait_seconds=${2:-90}
+    local image="${PREFLIGHT_IMAGE:-nginx:1.30.6}"
+    local name="bench-preflight-${runtime}-$$"
+
+    local port=""
+    local candidate
+    for candidate in $(seq 18080 18140); do
+        if ! lsof -nP -iTCP:"$candidate" -sTCP:LISTEN >/dev/null 2>&1; then
+            port=$candidate
+            break
+        fi
+    done
+    if [ -z "$port" ]; then
+        print_error "No free host port found for the preflight (18080-18140)"
+        return 1
+    fi
+
+    local out rc=0
+    if [ "$runtime" = "docker" ]; then
+        out=$(docker run -d --name "$name" -p "${port}:80" "$image" 2>&1) || rc=$?
+    else
+        out=$(container run -d --name "$name" -p "${port}:80" \
+            --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" "$image" 2>&1) || rc=$?
+    fi
+    if [ "$rc" -ne 0 ]; then
+        print_error "Could not start ${image} on ${runtime}: ${out}"
+        force_remove_container "$runtime" "$name"
+        return 1
+    fi
+
+    print_info "Waiting up to ${wait_seconds}s for http://localhost:${port} (${runtime}). If macOS asks for permission (e.g. Local Network), approve it now."
+
+    local ok=false
+    local elapsed=0
+    local code
+    while [ "$elapsed" -lt "$wait_seconds" ]; do
+        code=$(curl -s -o /dev/null --max-time 2 -w "%{http_code}" "http://localhost:${port}" 2>/dev/null || true)
+        if [ -n "$code" ] && [ "$code" != "000" ]; then
+            ok=true
+            break
+        fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+
+    if [ "$ok" != true ]; then
+        print_error "${runtime}: published port not reachable with curl within ${wait_seconds}s"
+        print_info "Check System Settings > Privacy & Security > Local Network and allow your terminal, container and wrk"
+        force_remove_container "$runtime" "$name"
+        return 1
+    fi
+
+    # wrk is a separate binary and may trigger its own permission prompt
+    if command -v wrk >/dev/null 2>&1; then
+        local wrk_out
+        wrk_out=$(run_with_timeout "$wait_seconds" wrk -t1 -c1 -d1s "http://localhost:${port}" 2>&1 || true)
+        if ! echo "$wrk_out" | grep -q "Requests/sec"; then
+            print_error "${runtime}: wrk could not benchmark the published port"
+            print_info "Output: $(echo "$wrk_out" | tr '\n' ' ' | cut -c1-200)"
+            print_info "Check System Settings > Privacy & Security > Local Network for wrk / your terminal"
+            force_remove_container "$runtime" "$name"
+            return 1
+        fi
+    fi
+
+    force_remove_container "$runtime" "$name"
+    print_success "${runtime}: published port reachable (curl and wrk)"
+    return 0
+}

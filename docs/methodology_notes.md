@@ -60,5 +60,20 @@ the analysis are committed in `requirements.lock`.
 
 ## Math benchmark
 
-The "Math (π)" benchmark computes π with `bc` (installed inside the container at run time), not with
-a dedicated benchmark suite. Its result files are named `*_pi_*.csv`.
+The "Math (π)" benchmark computes π with `bc` (preinstalled in the `bench-math` image), not with a
+dedicated benchmark suite. The "1 thread" and "2 threads" scenarios run one and two `bc` processes
+in parallel inside one container; the reported throughput is the aggregate number of digits
+computed per second (processes × digits ÷ time). Each iteration is a complete container run
+(start, computation, removal) and has a timeout (`MATH_TIMEOUT_SECONDS`, default 600 s); a failed or
+timed-out iteration is invalid and is never recorded as a measurement. Result files are named
+`*_pi_*.csv`.
+
+## Run hygiene
+
+- Every benchmark script refuses to start if containers are already running on either runtime, since
+  idle containers would compete for memory and CPU, and it removes any container it started when it
+  exits or is interrupted.
+- The HTTP benchmark requires published ports to be reachable from the host. A preflight starts a
+  container on each runtime and requests it with `curl` and `wrk`; it is part of
+  `verify_experiment_requirements.sh` and also runs at the start of the HTTP step. On macOS this
+  may trigger a "Local Network" permission prompt that has to be approved once.

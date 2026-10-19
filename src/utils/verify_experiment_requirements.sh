@@ -20,6 +20,7 @@ set -euo pipefail
 # Load common output functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common_output.sh"
+source "$SCRIPT_DIR/benchmark_utils.sh"
 
 # Inherit output style from the parent script if defined
 # If OUTPUT_STYLE is not set, use tag as the default for consistency
@@ -136,7 +137,7 @@ source "${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/config
 REGISTRY_IMAGES=("$ALPINE_TAG" "$NGINX_TAG")
 # Local images — must be built before the experiment (the sysbench image local/sysbench:1.0.20-alpine3.24
 # is built on demand by the CPU and memory scripts; see src/benchmarks/images/sysbench/Dockerfile)
-LOCAL_IMAGES=("bench-fio:alpine-3.24")
+LOCAL_IMAGES=("bench-fio:alpine-3.24" "bench-stream:alpine-3.24" "bench-math:alpine-3.24")
 MISSING_IMAGES=()
 
 for image in "${REGISTRY_IMAGES[@]}"; do
@@ -173,8 +174,8 @@ for image in "${LOCAL_IMAGES[@]}"; do
     if docker image inspect "$image" &> /dev/null; then
         check_pass "Docker image available: ${image}"
     else
-        check_fail "Docker image missing (local build): ${image}"
-        print_detail "  docker build -t ${image} src/benchmarks/images/fio/"
+        check_warn "Docker image not built yet: ${image} (the benchmark script builds it on first use)"
+        print_detail "  To build it now: docker build -t ${image} src/benchmarks/images/$(echo "${image%%:*}" | sed "s/^bench-//")/"
     fi
 done
 
@@ -200,8 +201,7 @@ for image in "${LOCAL_IMAGES[@]}"; do
         check_pass "Apple container image available: ${image}"
     else
         check_warn "Apple container image missing (local build): ${image}"
-        print_detail "  docker build -t ${image} src/benchmarks/images/fio/"
-        print_detail "  Run: ./src/utils/import_images_to_apple_container.sh"
+        print_detail "  (the benchmark scripts build and import it on first use)"
     fi
 done
 
@@ -366,9 +366,38 @@ done
 echo ""
 
 # =============================================================================
-# 9. DISK SPACE
+# 9. PUBLISHED-PORT PREFLIGHT
 # =============================================================================
-print_step "9. Disk Space Verification"
+print_step "9. Published-Port Preflight (HTTP benchmark prerequisites)"
+echo ""
+print_info "Starts a throwaway nginx container per runtime and requests it with curl and wrk."
+print_info "macOS may ask for Local Network permission: approve the prompts now (not during an unattended run)."
+echo ""
+
+if [ "${SKIP_PORT_PREFLIGHT:-false}" = "true" ]; then
+    check_warn "Published-port preflight skipped (SKIP_PORT_PREFLIGHT=true)"
+elif ! command -v wrk &> /dev/null; then
+    check_warn "wrk not installed: published-port preflight skipped"
+else
+    for runtime in docker container; do
+        if ! command -v "$runtime" &> /dev/null; then
+            check_warn "${runtime} not available: preflight skipped"
+        elif ! "$runtime" image inspect "$NGINX_TAG" &> /dev/null; then
+            check_warn "${NGINX_TAG} missing in ${runtime}: preflight skipped"
+        elif check_published_port_works "$runtime"; then
+            check_pass "${runtime}: published port reachable from the host (curl and wrk)"
+        else
+            check_fail "${runtime}: published port NOT reachable from the host"
+        fi
+    done
+fi
+
+echo ""
+
+# =============================================================================
+# 10. DISK SPACE
+# =============================================================================
+print_step "10. Disk Space Verification"
 echo ""
 
 AVAILABLE_SPACE_GB=$(df -g / | tail -1 | awk '{print $4}')

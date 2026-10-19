@@ -13,4 +13,4 @@ release branch, so the versions actually used by an experiment run are the ones 
 | libgomp | 15.2.0-r5 | STREAM benchmark (OpenMP) |
 | make | 4.4.1-r4 | STREAM benchmark |
 | musl-dev | 1.2.6-r2 | STREAM benchmark |
-| bc | 1.08.2-r1 | Math benchmark (installed at run time) |
+| bc | 1.08.2-r1 | Math benchmark (`images/math`) |

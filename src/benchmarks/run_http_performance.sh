@@ -136,6 +136,9 @@ PAUSE_HTTP=${PAUSE_HTTP_OVERRIDE:-4}  # Default: 4s, can be overridden
 HTTP_IMAGE="nginx:1.30.6"
 HTTP_MAX_RETRIES_PER_ITERATION=${HTTP_MAX_RETRIES_PER_ITERATION:-3}
 HTTP_STARTUP_TIMEOUT_SECONDS=${HTTP_STARTUP_TIMEOUT_SECONDS:-10}
+# Abort the whole step after this many consecutive failed iterations/warmups (instead of
+# retrying for hours; typical cause: a macOS permission prompt nobody answered).
+HTTP_MAX_CONSECUTIVE_FAILURES=${HTTP_MAX_CONSECUTIVE_FAILURES:-3}
 
 # HTTP port on the host (for -p HOST_PORT:80).
 # - HTTP_PORT_STRATEGY=fixed: requires HTTP_PORT to be free; if it is not, the iteration fails (logged) and continues
@@ -167,6 +170,7 @@ run_warmup_http() {
     
     print_step "Running ${warmup_count} warmup iterations (discarded) - ${runtime} ${test_type} ${test_name}"
     
+    local consecutive_failures=0
     for w in $(seq 1 $warmup_count); do
         print_info "Warmup ${w}/${warmup_count} - ${runtime} ${test_type} ${test_name}"
         
@@ -189,9 +193,14 @@ run_warmup_http() {
             server_pid=$(container run -d -p "${http_port}:80" --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" "$HTTP_IMAGE" 2>/dev/null)
         fi
         
+        local warmup_ok=false
         if [ -n "$server_pid" ]; then
             sleep 3
-            wrk -t4 -c100 -d5s "http://localhost:${http_port}" > /dev/null 2>&1
+            local warmup_wrk_out
+            warmup_wrk_out=$(wrk -t4 -c100 -d5s "http://localhost:${http_port}" 2>&1 || true)
+            if echo "$warmup_wrk_out" | grep -q "Requests/sec"; then
+                warmup_ok=true
+            fi
             
             # Stop server
             if [ "$runtime" = "docker" ]; then
@@ -200,6 +209,18 @@ run_warmup_http() {
             elif [ "$runtime" = "container" ]; then
                 container stop "$server_pid" > /dev/null 2>&1
                 container rm "$server_pid" > /dev/null 2>&1
+            fi
+        fi
+
+        if [ "$warmup_ok" = true ]; then
+            consecutive_failures=0
+        else
+            consecutive_failures=$((consecutive_failures + 1))
+            print_warning "  ⚠️  Warmup ${w}/${warmup_count}: no response from the server (${consecutive_failures}/${HTTP_MAX_CONSECUTIVE_FAILURES} consecutive failures)"
+            if [ "$consecutive_failures" -ge "$HTTP_MAX_CONSECUTIVE_FAILURES" ]; then
+                print_error "Aborting: the published port is not reachable from the host (${runtime})."
+                print_info "Check System Settings > Privacy & Security > Local Network (terminal, container, wrk) and re-run."
+                return 1
             fi
         fi
         
@@ -569,6 +590,7 @@ run_http_benchmark() {
     local valid_count=0
     local total_count=0
     local high_load_count=0
+    local consecutive_failures=0
     
     # CSV header
     echo "iteration,requests_per_sec,latency_ms,throughput_mb_per_sec" > "$output_file"
@@ -651,8 +673,15 @@ run_http_benchmark() {
             echo "${i},${result},10.0,${result}" >> "$output_file"
             valid_count=$((valid_count + 1))
             print_success "✅ ${result} req/sec (valid)"
+            consecutive_failures=0
         else
             print_warning "⚠️  HTTP Performance: validation error (result: ${result:-empty})"
+            consecutive_failures=$((consecutive_failures + 1))
+            if [ "$consecutive_failures" -ge "$HTTP_MAX_CONSECUTIVE_FAILURES" ]; then
+                print_error "Aborting: ${consecutive_failures} consecutive failed iterations (${runtime}). See ${failures_log}"
+                print_info "Check System Settings > Privacy & Security > Local Network (terminal, container, wrk) and re-run."
+                return 1
+            fi
         fi
         
         total_count=$((total_count + 1))
@@ -782,6 +811,15 @@ main() {
     check_dependencies wrk
     check_rosetta
     check_apple_container auto_start
+    init_container_safety
+
+    # Published-port preflight: triggers macOS permission prompts up front and fails fast
+    # (set SKIP_PORT_PREFLIGHT=true to skip)
+    if [ "${SKIP_PORT_PREFLIGHT:-false}" != "true" ]; then
+        print_step "Checking that published container ports are reachable from the host..."
+        check_published_port_works docker || exit 1
+        check_published_port_works container || exit 1
+    fi
     
     # Set up experiment
     setup_output_directory "http_performance"

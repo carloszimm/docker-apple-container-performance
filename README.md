@@ -99,7 +99,7 @@ The analysis produces CSV and LaTeX tables, comparison plots, a statistical dash
 | 4 | HTTP | nginx + wrk | req/s (4 threads, 100 connections) |
 | 5 | Disk I/O | fio | KB/s (sequential/random read/write) |
 | 6 | STREAM | STREAM benchmark | MB/s (Copy, Scale, Add, Triad — 1 and 2 threads) |
-| 7 | Math (π) | bc | digits/s (10,000 digits — 1 and 2 processes) |
+| 7 | Math (π) | bc | aggregate digits/s (10,000 digits per process — 1 and 2 parallel processes) |
 
 All benchmarks apply identical resource limits to both runtimes: 12 CPUs and 8 GB of memory.
 
