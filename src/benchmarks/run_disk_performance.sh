@@ -183,8 +183,11 @@ ensure_fio_image() {
     if [ "$runtime" = "docker" ]; then
         if ! docker image inspect "${FIO_IMAGE}" >/dev/null 2>&1; then
             print_step "Building benchmark image (fio+jq): ${FIO_IMAGE}"
-            if ! docker build -t "${FIO_IMAGE}" -f "${dockerfile_path}" "${dockerfile_dir}" >/dev/null 2>&1; then
+            local build_out
+            if ! build_out=$(docker build -t "${FIO_IMAGE}" -f "${dockerfile_path}" "${dockerfile_dir}" 2>&1); then
                 print_error "Failed to build image ${FIO_IMAGE}"
+                print_detail "docker build output (last lines):"
+                echo "$build_out" | tail -n 15
                 return 1
             fi
         fi

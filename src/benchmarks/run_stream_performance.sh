@@ -198,8 +198,11 @@ ensure_stream_image() {
 
         if ! docker image inspect "${STREAM_IMAGE}" >/dev/null 2>&1; then
             print_step "Building benchmark image (STREAM toolchain): ${STREAM_IMAGE}"
-            if ! docker build -t "${STREAM_IMAGE}" -f "${dockerfile_path}" "${dockerfile_dir}" >/dev/null 2>&1; then
+            local build_out
+            if ! build_out=$(docker build -t "${STREAM_IMAGE}" -f "${dockerfile_path}" "${dockerfile_dir}" 2>&1); then
                 print_error "Failed to build image ${STREAM_IMAGE}"
+                print_detail "docker build output (last lines):"
+                echo "$build_out" | tail -n 15
                 return 1
             fi
         fi

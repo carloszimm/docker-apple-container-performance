@@ -5,7 +5,7 @@ FROM alpine:3.24@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cab
 # - Keeps the STREAM compilation outside the loop (once per scenario), since STREAM_ARRAY_SIZE is a compile-time constant
 # - Ships a vendored copy of stream.c (v5.10, jeffhammond/STREAM commit
 #   4dbce1d0fdb7410e8f21b48f3381bc0a1341967f) so no network access is needed at run time
-RUN apk add --no-cache gcc make libc-dev musl-dev libgomp
+RUN apk add --no-cache gcc make musl-dev libgomp
 
 WORKDIR /opt/stream
 COPY stream.c /opt/stream/stream.c
