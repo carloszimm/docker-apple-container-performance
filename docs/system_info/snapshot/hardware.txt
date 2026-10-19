@@ -1,0 +1,17 @@
+Hardware:
+
+    Hardware Overview:
+
+      Model Name: MacBook Pro
+      Model Identifier: Mac14,10
+      Model Number: MNW93BZ/A
+      Chip: Apple M2 Pro
+      Total Number of Cores: 12 (8 Performance and 4 Efficiency)
+      Memory: 16 GB
+      System Firmware Version: 18000.161.10
+      OS Loader Version: 18000.161.10
+      Serial Number (system): VK3W022GY1
+      Hardware UUID: CEFFC8AF-4C8F-57C0-8E7A-A7A5E1F1930F
+      Provisioning UDID: 00006020-000E48A001E8C01E
+      Activation Lock Status: Disabled
+

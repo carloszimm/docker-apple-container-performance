@@ -1,0 +1,11 @@
+=== Tools on the HOST ===
+
+=== sysbench ===
+sysbench 1.0.20
+
+=== fio ===
+fio-3.43
+
+=== wrk ===
+wrk 4.2.0 [kqueue] Copyright (C) 2012 Will Glozer
+Not installed
