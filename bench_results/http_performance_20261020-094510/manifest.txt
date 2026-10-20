@@ -1,0 +1,55 @@
+=== EXPERIMENT MANIFEST - HTTP PERFORMANCE ===
+Date: Tue Oct 20 10:00:53 -03 2026
+Experiment: HTTP Performance (Docker Desktop vs Apple container)
+Iterations: 30
+Valid minimum: 30
+Significance level: 0.05
+Confidence level: 95%
+HTTP workload: nginx:1.30.6 (invariant; no fallback)
+Retries per iteration (server startup): 3
+Healthcheck timeout (startup): 10s
+HTTP port (host): base=8080; strategy=auto; max_tries=50
+
+=== GENERATED FILES ===
+total 56
+drwxr-xr-x   9 carloszimmerle  staff   288 Oct 20 10:00 .
+drwxr-xr-x  12 carloszimmerle  staff   384 Oct 20 09:45 ..
+-rw-r--r--   1 carloszimmerle  staff   831 Oct 20 10:00 container_http_results.csv
+-rw-r--r--   1 carloszimmerle  staff   831 Oct 20 09:52 docker_http_results.csv
+-rw-r--r--   1 carloszimmerle  staff   268 Oct 20 10:00 http_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff    51 Oct 20 09:46 http_server_failures.csv
+-rw-r--r--   1 carloszimmerle  staff     0 Oct 20 10:00 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff  5923 Oct 20 10:00 results_wrk.csv
+-rw-r--r--   1 carloszimmerle  staff  2227 Oct 20 10:00 system_load_log.csv
+
+=== CONFIGURATION ===
+- Iterations: 30
+- Statistical validation: Minimum 30 valid iterations
+- Test: HTTP benchmark with wrk
+- Runtimes: Docker Desktop, Apple container
+- Threads: 4
+- Connections: 100
+- Duration: 10 seconds per test
+- Warmup iterations: 5
+- Policy: invariant workload (if nginx fails, the iteration is invalid; no server swap)
+- Auditing: startup failures recorded in http_server_failures.csv
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- Threshold CPU: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentary only. It does not prevent iterations from running.
+
+=== METHODOLOGY ===
+- HTTP performance measurement
+- Result validation (positive numeric values)
+- Robust statistical analysis
+- Full data transparency
+- Based on Raj Jain - The Art of Computer Systems Performance Analysis
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Reproducibility for other researchers

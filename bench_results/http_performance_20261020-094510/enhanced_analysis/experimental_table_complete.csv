@@ -1,0 +1,3 @@
+benchmark,scenario,tool,unit,n,mean,std,median,q25,q75,iqr,min,max,p5,p95,ci_lower,ci_upper,skewness,kurtosis,test_used,p_value,p_value_bonferroni,p_value_fdr_bh,significant,effect_size,effect_interpretation,statistical_power,power_interpretation
+HTTP,http,container,req/s or ms,30,62404.5757,414.4047,62334.8200,62224.8975,62718.2250,493.3275,61057.1100,63089.9500,61817.6525,62918.3615,62249.8344,62559.3169,-0.9887,1.9802,Mann-Whitney U test,0.0000,0.0000,0.0000,True,-29.6949,Large,1.0000,High
+HTTP,http,docker,req/s or ms,30,50869.3390,360.6497,50849.1550,50669.0550,51137.9175,468.8625,49875.3700,51636.6500,50347.9795,51347.6295,50734.6702,51004.0078,-0.3977,0.7243,Mann-Whitney U test,0.0000,0.0000,0.0000,True,-29.6949,Large,1.0000,High

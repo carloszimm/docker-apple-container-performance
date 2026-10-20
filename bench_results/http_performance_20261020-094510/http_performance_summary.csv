@@ -1,0 +1,3 @@
+runtime,test_type,test_name,iterations,valid_iterations,mean_requests_per_sec,std_requests_per_sec,min_requests_per_sec,max_requests_per_sec
+container,http,benchmark,30,30,62404.58,414.40,61057.11,63089.95
+docker,http,benchmark,30,30,50869.34,360.65,49875.37,51636.65
