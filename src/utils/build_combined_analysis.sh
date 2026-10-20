@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds a combined dataset from the seven benchmark result folders and runs the statistical
-# analysis over all of it at once (multiple-comparison corrections then span every benchmark).
+# analysis over all of it at once (one set of tables, plots and one report for the whole
+# experiment; multiple-comparison corrections are applied within each benchmark).
 #
 # analyze_results_enhanced.py reads ONE directory containing fixed file names
 # (results_main.csv, results_sysbench.csv, results_wrk.csv, results_fio.csv, results_stream.csv,
