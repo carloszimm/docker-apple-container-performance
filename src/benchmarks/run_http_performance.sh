@@ -190,7 +190,14 @@ run_warmup_http() {
             server_pid=$(docker run -d -p "${http_port}:80" "$HTTP_IMAGE" 2>/dev/null)
         elif [ "$runtime" = "container" ]; then
             # Use standardized resources, but keep -d and -p for daemon and port
-            server_pid=$(container run -d -p "${http_port}:80" --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" "$HTTP_IMAGE" 2>/dev/null)
+            # Name the container so it can always be stopped/removed by name (the output of
+            # `container run -d` is not reliable as an ID: it may include progress text)
+            local warmup_name="bench-http-warmup-$$-${RANDOM}"
+            if container run -d --name "$warmup_name" -p "${http_port}:80" --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" "$HTTP_IMAGE" >/dev/null 2>&1; then
+                server_pid="$warmup_name"
+            else
+                force_remove_container container "$warmup_name"
+            fi
         fi
         
         local warmup_ok=false
@@ -207,8 +214,7 @@ run_warmup_http() {
                 docker stop "$server_pid" > /dev/null 2>&1
                 docker rm "$server_pid" > /dev/null 2>&1
             elif [ "$runtime" = "container" ]; then
-                container stop "$server_pid" > /dev/null 2>&1
-                container rm "$server_pid" > /dev/null 2>&1
+                stop_http_server container "$server_pid"
             fi
         fi
 
@@ -500,6 +506,15 @@ stop_http_server() {
     else
         container stop "$server_pid" >/dev/null 2>&1 || true
         container rm "$server_pid" >/dev/null 2>&1 || true
+        # Wait until the container is really gone, so its published port is released before
+        # the next iteration starts a new server
+        local waited=0
+        while [ "$waited" -lt 20 ] && container ls -a 2>/dev/null | awk '{print $1}' | grep -qx "$server_pid"; do
+            container stop "$server_pid" >/dev/null 2>&1 || true
+            container rm "$server_pid" >/dev/null 2>&1 || true
+            sleep 1
+            waited=$((waited + 1))
+        done
     fi
 }
 
@@ -527,12 +542,19 @@ start_http_server_nginx_only() {
     else
         local out=""
         set +e
-        out=$(container run -d -p "${http_port}:80" --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" "$HTTP_IMAGE" 2>&1)
+        # Named container: stop/remove by name, never by parsing the output of `container run -d`
+        # (that output can contain progress text, which made stop/rm fail and leaked containers
+        # and their published ports)
+        local container_name="bench-http-$$-${RANDOM}"
+        out=$(container run -d --name "$container_name" -p "${http_port}:80" --cpus="${CONTAINER_STANDARD_CPUS}" --memory="${CONTAINER_STANDARD_MEMORY}" "$HTTP_IMAGE" 2>&1)
         local rc=$?
         set -e
         if [ "$rc" -eq 0 ]; then
-            server_pid="$out"
+            server_pid="$container_name"
         else
+            force_remove_container container "$container_name"
+            # Drop the progress lines ("[3/6] ...") so the actual error is what gets logged
+            out=$(echo "$out" | tr '\r' '\n' | grep -v '^\[[0-9]*/[0-9]*\]' | tail -n 3 || true)
             local details
             details=$(sanitize_csv_field "port=${http_port}; rc=${rc}; ${out}")
             echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ"),${runtime},${attempt},start,failed_to_start_container,${details}" >> "$log_file"
