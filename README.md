@@ -89,7 +89,7 @@ bash src/utils/build_combined_analysis.sh --sample-size   # also the sample-size
 bash src/utils/build_combined_analysis.sh --http bench_results/http_performance_<timestamp> ...   # pick folders explicitly
 ```
 
-It refuses to run if any folder has fewer than 30 valid iterations in its summary (`MIN_VALID` to change), and writes `bench_results/combined/` (merged CSVs, `SOURCES.txt` listing the source folders and the repository commit, and `enhanced_analysis/`).
+It refuses to run if any folder has fewer than 30 valid iterations in its summary (`MIN_VALID` to change). The merged input CSVs go to `bench_results/combined/`, and the analysis (tables, plots, reports) to `bench_results/enhanced_analysis/`, together with `SOURCES.txt`, which lists the source folders and the repository commit. Use `--output` and `--analysis-output` to change these locations.
 
 ## Benchmarks
 
@@ -119,7 +119,7 @@ docker-apple-container-performance/
 ├── docs/
 │   └── system_info/         # Hardware, software, and configuration snapshots (generated)
 ├── tests/                   # Validation scripts and Python unit tests
-├── bench_results/           # Benchmark output (CSV, analysis, plots; generated); combined/ holds the merged analysis
+├── bench_results/           # Benchmark output (CSV, analysis, plots; generated); combined/ holds the merged inputs and enhanced_analysis/ the combined analysis
 ├── requirements.txt         # Python dependencies
 └── pyproject.toml           # Project metadata
 ```

@@ -12,7 +12,9 @@
 #
 # Options (each folder defaults to the most recent bench_results/<name>_performance_*):
 #   --startup DIR --cpu DIR --memory DIR --http DIR --disk DIR --stream DIR --math DIR
-#   --output DIR      Combined directory (default: bench_results/combined)
+#   --output DIR      Directory for the merged input CSVs (default: bench_results/combined)
+#   --analysis-output DIR
+#                     Directory for the analysis results (default: bench_results/enhanced_analysis)
 #   --sample-size     Also run the sample-size analysis (Raj Jain, Ch. 13)
 #
 # Environment:
@@ -26,6 +28,7 @@ cd "$REPO_ROOT"
 
 MIN_VALID="${MIN_VALID:-30}"
 OUTPUT_DIR="bench_results/combined"
+ANALYSIS_DIR="bench_results/enhanced_analysis"
 SAMPLE_SIZE=""
 # Per-benchmark folders are kept in DIR_<name> variables (macOS ships bash 3.2: no associative arrays)
 DIR_startup=""; DIR_cpu=""; DIR_memory=""; DIR_http=""; DIR_disk=""; DIR_stream=""; DIR_math=""
@@ -35,8 +38,9 @@ while [ $# -gt 0 ]; do
         --startup|--cpu|--memory|--http|--disk|--stream|--math)
             printf -v "DIR_${1#--}" '%s' "${2%/}"; shift 2 ;;
         --output) OUTPUT_DIR="${2%/}"; shift 2 ;;
+        --analysis-output) ANALYSIS_DIR="${2%/}"; shift 2 ;;
         --sample-size) SAMPLE_SIZE="--sample-size"; shift ;;
-        -h|--help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) print_error "Unknown option: $1"; exit 1 ;;
     esac
 done
@@ -135,6 +139,7 @@ else
     exit 1
 fi
 
-"$PY" src/analysis/analyze_results_enhanced.py "$OUTPUT_DIR" --output "$OUTPUT_DIR/enhanced_analysis" ${SAMPLE_SIZE}
+"$PY" src/analysis/analyze_results_enhanced.py "$OUTPUT_DIR" --output "$ANALYSIS_DIR" ${SAMPLE_SIZE}
+cp "$OUTPUT_DIR/SOURCES.txt" "$ANALYSIS_DIR/SOURCES.txt"
 
-print_success "Combined analysis written to ${OUTPUT_DIR}/enhanced_analysis (sources: ${OUTPUT_DIR}/SOURCES.txt)"
+print_success "Combined analysis written to ${ANALYSIS_DIR} (input CSVs: ${OUTPUT_DIR}; sources: ${ANALYSIS_DIR}/SOURCES.txt)"
