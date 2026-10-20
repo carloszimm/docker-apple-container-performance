@@ -68,6 +68,13 @@ computed per second (processes × digits ÷ time). Each iteration is a complete 
 timed-out iteration is invalid and is never recorded as a measurement. Result files are named
 `*_pi_*.csv`.
 
+## Host conditions
+
+The experiment runs on a single Mac, started from a terminal session kept awake with
+`caffeinate -dims` (prevents display, idle-system and disk sleep, and sleep on AC power), so that
+the machine cannot sleep during a run. The sleep and wake log (`pmset -g log`) can be used to confirm
+that no sleep occurred during a run.
+
 ## Run hygiene
 
 - Every benchmark script refuses to start if containers are already running on either runtime, since
