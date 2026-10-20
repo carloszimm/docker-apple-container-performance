@@ -70,24 +70,26 @@ bash src/benchmarks/run_math_performance.sh
 
 ## Analyzing the results
 
-Results are written to `bench_results/<benchmark>_<timestamp>/`. To generate the full statistical analysis:
+Results are written to `bench_results/<benchmark>_<timestamp>/`.
 
-```bash
-python src/analysis/analyze_results_enhanced.py \
-  bench_results/<benchmark_dir> \
-  --output bench_results/<benchmark_dir>/enhanced_analysis
-```
-
-To include the sample-size analysis (Jain, ch. 13):
+**Per-benchmark analysis (automatic).** Every benchmark script runs the statistical analysis when it finishes and writes it to `bench_results/<benchmark>_<timestamp>/enhanced_analysis/`: CSV and LaTeX tables, comparison plots, a statistical dashboard, normality tests, Mann-Whitney U tests, ANOVA, and multiple-comparison corrections. You do not need to run anything for this. To re-generate it manually (for example after changing the analysis, or to add the sample-size analysis of Jain, ch. 13):
 
 ```bash
 python src/analysis/analyze_results_enhanced.py \
   bench_results/<benchmark_dir> \
   --output bench_results/<benchmark_dir>/enhanced_analysis \
-  --sample-size
+  --sample-size        # optional
 ```
 
-The analysis produces CSV and LaTeX tables, comparison plots, a statistical dashboard, normality tests, Mann-Whitney U tests, ANOVA, and multiple-comparison corrections.
+**Combined analysis (one extra step after the full experiment).** The analysis script reads a single directory with fixed file names, so the seven benchmark folders have to be merged first (CPU and memory both write `results_sysbench.csv`). This script does it and then analyzes all benchmarks in one run, so multiple-comparison corrections span the whole experiment:
+
+```bash
+bash src/utils/build_combined_analysis.sh                 # uses the most recent folder of each benchmark
+bash src/utils/build_combined_analysis.sh --sample-size   # also the sample-size analysis
+bash src/utils/build_combined_analysis.sh --http bench_results/http_performance_<timestamp> ...   # pick folders explicitly
+```
+
+It refuses to run if any folder has fewer than 30 valid iterations in its summary (`MIN_VALID` to change), and writes `bench_results/combined/` (merged CSVs, `SOURCES.txt` listing the source folders and the repository commit, and `enhanced_analysis/`).
 
 ## Benchmarks
 
@@ -117,7 +119,7 @@ docker-apple-container-performance/
 ├── docs/
 │   └── system_info/         # Hardware, software, and configuration snapshots (generated)
 ├── tests/                   # Validation scripts and Python unit tests
-├── bench_results/           # Benchmark output (CSV, analysis, plots; generated)
+├── bench_results/           # Benchmark output (CSV, analysis, plots; generated); combined/ holds the merged analysis
 ├── requirements.txt         # Python dependencies
 └── pyproject.toml           # Project metadata
 ```
