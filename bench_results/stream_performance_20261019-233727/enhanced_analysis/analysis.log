@@ -1,0 +1,6 @@
+2026-10-20 00:02:45,849 - __main__ - INFO - Logging configured. Log file: bench_results/stream_performance_20261019-233727/enhanced_analysis/analysis.log
+2026-10-20 00:02:45,851 - __main__ - INFO - Loaded results_stream.csv: 480 records
+2026-10-20 00:02:46,852 - __main__ - INFO - CSV table saved successfully: bench_results/stream_performance_20261019-233727/enhanced_analysis/experimental_table_complete.csv
+2026-10-20 00:02:46,856 - __main__ - INFO - LaTeX table saved successfully: bench_results/stream_performance_20261019-233727/enhanced_analysis/experimental_table_complete.tex
+2026-10-20 00:02:46,856 - __main__ - INFO - Summary table saved successfully: bench_results/stream_performance_20261019-233727/enhanced_analysis/experimental_table_summary.csv
+2026-10-20 00:02:46,871 - __main__ - INFO - Statistical report generated successfully: bench_results/stream_performance_20261019-233727/enhanced_analysis/enhanced_analysis_report.txt

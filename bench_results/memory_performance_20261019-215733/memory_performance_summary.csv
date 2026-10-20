@@ -1,0 +1,5 @@
+runtime,test_type,test_num,iterations,valid_iterations,mean_throughput_mb_per_sec,std_throughput_mb_per_sec,min_throughput_mb_per_sec,max_throughput_mb_per_sec
+container,memory,1,30,30,5922.17,9.65,5875.64,5935.26
+container,memory,2,30,30,10610.62,16.41,10569.99,10635.83
+docker,memory,1,30,30,5886.89,2.82,5879.74,5891.17
+docker,memory,2,30,30,8555.61,2894.94,2161.62,10627.92

@@ -1,0 +1,54 @@
+=== EXPERIMENTAL MANIFEST - MEMORY PERFORMANCE ===
+Date: Mon Oct 19 22:26:42 -03 2026
+Experiment: Memory Performance (Docker vs Apple container)
+Iterations: 30
+Valid minimum: 30
+Significance level: 0.05
+Confidence level: 95%
+
+=== GENERATED FILES ===
+total 80
+drwxr-xr-x  10 carloszimmerle  staff    320 Oct 19 22:26 .
+drwxr-xr-x   8 carloszimmerle  staff    256 Oct 19 21:57 ..
+-rw-r--r--   1 carloszimmerle  staff    773 Oct 19 22:26 container_sysbench_memory_1.csv
+-rw-r--r--   1 carloszimmerle  staff    833 Oct 19 22:04 container_sysbench_memory_2.csv
+-rw-r--r--   1 carloszimmerle  staff    773 Oct 19 22:19 docker_sysbench_memory_1.csv
+-rw-r--r--   1 carloszimmerle  staff    801 Oct 19 22:11 docker_sysbench_memory_2.csv
+-rw-r--r--   1 carloszimmerle  staff      0 Oct 19 22:26 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff    378 Oct 19 22:26 memory_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff  12285 Oct 19 22:26 results_sysbench.csv
+-rw-r--r--   1 carloszimmerle  staff   4440 Oct 19 22:26 system_load_log.csv
+
+=== CONFIGURATION ===
+- Iterations: 30
+- Statistical validation: minimum 30 valid iterations
+- Test: sysbench memory (2 tests per runtime)
+- Runtimes: Docker, Apple container
+- Threads: 1 and 2
+- Duration: 10 seconds per test
+- Warmup iterations: 5
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- CPU threshold: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentation only. It does not prevent iterations from running.
+
+=== IMAGE USED (METHODOLOGICAL RIGOR) ===
+Image: local/sysbench:1.0.20-alpine3.24
+Digest: sha256:6cf1b1e9f52c593dc5950c710122e1ed550a39ac71497ce1739d63d5c8ae131e
+Note: Identical image guaranteed on both runtimes for experimental validity
+
+=== METHODOLOGY ===
+- Memory performance measurement
+- Result validation (positive numeric values)
+- Robust statistical analysis
+- Full data transparency
+- Based on Raj Jain - The Art of Computer Systems Performance Analysis
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Reproducibility for other researchers

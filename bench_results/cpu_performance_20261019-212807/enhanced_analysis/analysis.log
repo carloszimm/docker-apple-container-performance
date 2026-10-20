@@ -1,0 +1,6 @@
+2026-10-19 21:57:31,890 - __main__ - INFO - Logging configured. Log file: bench_results/cpu_performance_20261019-212807/enhanced_analysis/analysis.log
+2026-10-19 21:57:31,891 - __main__ - INFO - Loaded results_sysbench.csv: 120 records
+2026-10-19 21:57:32,940 - __main__ - INFO - CSV table saved successfully: bench_results/cpu_performance_20261019-212807/enhanced_analysis/experimental_table_complete.csv
+2026-10-19 21:57:32,941 - __main__ - INFO - LaTeX table saved successfully: bench_results/cpu_performance_20261019-212807/enhanced_analysis/experimental_table_complete.tex
+2026-10-19 21:57:32,941 - __main__ - INFO - Summary table saved successfully: bench_results/cpu_performance_20261019-212807/enhanced_analysis/experimental_table_summary.csv
+2026-10-19 21:57:32,941 - __main__ - INFO - Statistical report generated successfully: bench_results/cpu_performance_20261019-212807/enhanced_analysis/enhanced_analysis_report.txt

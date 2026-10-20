@@ -1,0 +1,58 @@
+=== EXPERIMENT MANIFEST - MATH PERFORMANCE ===
+Date: Tue Oct 20 03:27:29 -03 2026
+Experiment: Mathematical Computation Performance (Docker Desktop vs Apple container)
+Iterations: 30
+Minimum valid: 30
+Significance level: 0.05
+Confidence level: 95%
+
+=== GENERATED FILES ===
+total 104
+drwxr-xr-x  10 carloszimmerle  staff    320 Oct 20 03:27 .
+drwxr-xr-x  12 carloszimmerle  staff    384 Oct 20 00:02 ..
+-rw-r--r--   1 carloszimmerle  staff    730 Oct 20 02:37 container_pi_1t.csv
+-rw-r--r--   1 carloszimmerle  staff    730 Oct 20 01:47 container_pi_2t.csv
+-rw-r--r--   1 carloszimmerle  staff    730 Oct 20 03:27 docker_pi_1t.csv
+-rw-r--r--   1 carloszimmerle  staff    730 Oct 20 00:54 docker_pi_2t.csv
+-rw-r--r--   1 carloszimmerle  staff      0 Oct 20 03:27 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff    330 Oct 20 03:27 math_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff  22741 Oct 20 03:27 results_math.csv
+-rw-r--r--   1 carloszimmerle  staff   4440 Oct 20 03:26 system_load_log.csv
+
+=== CONFIGURATION ===
+- Iterations: 30
+- Statistical validation: Minimum 30 valid iterations
+- Test: PI calculation (2 parallel-process configurations per runtime)
+- Runtimes: Docker Desktop, Apple container
+- PI digits: 10000
+- Threads: 1 and 2 (number of parallel bc processes in one container)
+- Throughput: threads x PI_DIGITS / time (aggregate digits per second)
+- Per-iteration timeout: 600s (timed-out or failed iterations are invalid)
+- Method: bc (Basic Calculator) for PI calculation
+- Warmup iterations: 5
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- CPU threshold: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentation only. It does not prevent iterations from running.
+
+=== IMAGE USED (METHODOLOGICAL RIGOR) ===
+Image: bench-math:alpine-3.24
+Digest: sha256:1021648113815b39070fbebc80916a3570ebf2c13d41601184acf5fbdf320392
+Note: Identical image guaranteed on both runtimes for experimental validity
+Tool: bc (Basic Calculator), preinstalled in the image (no package installation during measurements)
+
+=== METHODOLOGY ===
+- Measurement of mathematical computation performance
+- Result validation (positive numeric values)
+- Robust statistical analysis
+- Full data transparency
+- Based on Raj Jain - The Art of Computer Systems Performance Analysis
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Replicability for other researchers

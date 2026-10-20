@@ -1,0 +1,78 @@
+=== EXPERIMENTAL MANIFEST - STREAM PERFORMANCE ===
+Date: Tue Oct 20 00:02:44 -03 2026
+Experiment: Memory Bandwidth Performance (Docker vs Apple container)
+Iterations: 30
+Valid minimum: 30
+Significance level: 0.05
+Confidence level: 95%
+
+=== GENERATED FILES ===
+total 272
+drwxr-xr-x  22 carloszimmerle  staff    704 Oct 20 00:02 .
+drwxr-xr-x  11 carloszimmerle  staff    352 Oct 19 23:37 ..
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:42 container_stream_Add_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 20 00:02 container_stream_Add_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:47 container_stream_Copy_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:50 container_stream_Copy_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:40 container_stream_Scale_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:54 container_stream_Scale_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:59 container_stream_Triad_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:57 container_stream_Triad_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:48 docker_stream_Add_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:53 docker_stream_Add_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:43 docker_stream_Copy_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:56 docker_stream_Copy_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 20 00:01 docker_stream_Scale_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:38 docker_stream_Scale_2t.csv
+-rw-r--r--   1 carloszimmerle  staff   1189 Oct 19 23:45 docker_stream_Triad_1t.csv
+-rw-r--r--   1 carloszimmerle  staff   1219 Oct 19 23:51 docker_stream_Triad_2t.csv
+-rw-r--r--   1 carloszimmerle  staff      0 Oct 20 00:02 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff  47221 Oct 20 00:02 results_stream.csv
+-rw-r--r--   1 carloszimmerle  staff   1080 Oct 20 00:02 stream_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff  17768 Oct 20 00:02 system_load_log.csv
+
+=== CONFIGURATION ===
+- Iterations: 30
+- Statistical validation: minimum 30 valid iterations
+- Test: STREAM (4 operation types, 2 thread configurations per runtime)
+- Runtimes: Docker, Apple container
+- Array size: 512MB (for both runtimes)
+- NOTE: Apple container requires explicit memory configuration via --memory
+- Automatically configured memory: 2304MB
+- For a fair comparison, both runtimes use 512MB
+- Threads: 1 and 2
+- Test types: copy, scale, add, triad
+- Warmup iterations: 5
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- CPU threshold: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentation only. It does not prevent iterations from running.
+
+=== IMAGE USED (METHODOLOGICAL RIGOR) ===
+Image: bench-stream:alpine-3.24
+Digest: sha256:55c45dc2048995d4fa36f70a3e0437d73c69b827d5e435bb6a568e8f73a8a143
+Note: Identical image guaranteed on both runtimes for experimental validity
+STREAM compiled inside the container with flags: -O3 -fopenmp
+
+=== "SETUP NOISE" CONTROL (STREAM) ===
+- Policy: remove setup (installation/compilation/download) from inside the iteration
+- Implementation:
+  - Fixed local image with toolchain (no apk add in the loop): bench-stream:alpine-3.24
+  - Binary compiled once per scenario (outside the measurement)
+  - Measurement runs only /opt/stream/stream via exec (steady state)
+
+=== METHODOLOGY ===
+- Memory bandwidth measurement
+- Result validation (positive numeric values)
+- Robust statistical analysis
+- Full data transparency
+- Based on Raj Jain - The Art of Computer Systems Performance Analysis
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Reproducibility for other researchers

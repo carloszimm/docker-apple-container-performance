@@ -1,0 +1,46 @@
+=== ROBUST STATISTICAL ANALYSIS REPORT ===
+BENCHMARK DOCKER VS APPLE CONTAINER
+
+Analysis date: 2026-10-19 23:37:26.669506
+Script version: Enhanced Statistical Analysis v2.0
+
+=== METHODOLOGICAL RIGOR ASSESSMENT (INFORMATIONAL) ===
+This section assesses whether the collected data meet methodological rigor standards.
+The statistical analysis is performed regardless of this result.
+
+⚠️  Status: Data do not fully meet methodological rigor
+   (Analysis performed normally, but results should be interpreted with caution)
+
+❌ Points of attention:
+  - fio - container random_read: 30 iterations (Jain requires at least 57 for precision ±5.0%)
+
+⚠️  Recommendations:
+  - fio - container random_read: High variability (CV=18.80%)
+
+NOTE: For full methodological rigor, running with 30 iterations is recommended.
+The results presented below are valid, but may have statistical limitations.
+
+
+=== ROBUST STATISTICAL ANALYSIS (Disk I/O) ===
+Metric: Throughput (KB/s)
+Statistical Test Results:
+        scenario  docker_n  container_n  docker_mean  container_mean  docker_std  container_std  docker_median  container_median           test_used  test_statistic      p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+     random_read        30           30   191.682333      133.189333    1.660967      25.034043        191.445           122.250 Mann-Whitney U test           815.0 7.088114e-08                     True        Normal       Non-normal            False     3.297115                 Large                1.0                 High        2.835246e-07                    True    7.088114e-08                True
+    random_write        30           30   171.515667       51.493667    1.996735       2.005431        172.085            50.715 Mann-Whitney U test           900.0 3.004749e-11                     True        Normal       Non-normal             True    59.978378                 Large                1.0                 High        1.201900e-10                    True    6.035934e-11                True
+ sequential_read        30           30  4349.930000     3233.032667   17.218838     282.912859       4351.110          3124.830 Mann-Whitney U test           870.0 5.569602e-10                     True        Normal       Non-normal            False     5.572790                 Large                1.0                 High        2.227841e-09                    True    7.426136e-10                True
+sequential_write        30           30  3822.085667     2607.588667   26.704754      74.552528       3829.110          2579.490 Mann-Whitney U test           900.0 3.017967e-11                     True        Normal       Non-normal            False    21.688789                 Large                1.0                 High        1.207187e-10                    True    6.035934e-11                True
+
+=== SUMMARY ===
+Tests with significant difference: 4/4
+  random_read: Docker is better (p=0.000000, d=3.2971)
+  random_write: Docker is better (p=0.000000, d=59.9784)
+  sequential_read: Docker is better (p=0.000000, d=5.5728)
+  sequential_write: Docker is better (p=0.000000, d=21.6888)
+
+
+=== LIMITATIONS AND CONSIDERATIONS ===
+1. Limited sample size may affect the robustness of the results
+2. Multiple comparisons increase the chance of false positives
+3. Non-parametric tests may have lower power than parametric tests
+4. Results are specific to the experimental environment used
+5. Interpretation of effect sizes should consider the practical context

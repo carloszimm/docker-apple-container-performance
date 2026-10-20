@@ -1,0 +1,83 @@
+=== ROBUST STATISTICAL ANALYSIS REPORT ===
+BENCHMARK DOCKER VS APPLE CONTAINER
+
+Analysis date: 2026-10-19 21:28:06.435136
+Script version: Enhanced Statistical Analysis v2.0
+
+=== METHODOLOGICAL RIGOR ASSESSMENT (INFORMATIONAL) ===
+This section assesses whether the collected data meet methodological rigor standards.
+The statistical analysis is performed regardless of this result.
+
+✅ Status: Data meet methodological rigor
+
+=== ENHANCED DESCRIPTIVE STATISTICS ===
+Basic Statistics (including Median and IQR):
+                        count    mean  median     std    min   max     q25    q75     iqr      p5     p95    skew  kurtosis
+tool      scenario                                                                                                         
+container startup_warm     30  0.7515  0.7500  0.0148  0.729  0.80  0.7422  0.754  0.0118  0.7372  0.7808  2.0183    4.6411
+docker    startup_warm     30  0.1467  0.1475  0.0066  0.136  0.16  0.1403  0.151  0.0107  0.1370  0.1560  0.0146   -1.0388
+
+Confidence Intervals (95%):
+                        ci_lower  ci_upper
+tool      scenario                        
+container startup_warm    0.7459    0.7570
+docker    startup_warm    0.1442    0.1492
+
+=== ROBUST STATISTICS (Median and IQR) ===
+Median and IQR are robust statistics that are not affected by outliers.
+IQR (Interquartile Range) = Q3 - Q1
+
+                        median     q25    q75     iqr    mean     std
+tool      scenario                                                   
+container startup_warm  0.7500  0.7422  0.754  0.0118  0.7515  0.0148
+docker    startup_warm  0.1475  0.1403  0.151  0.0107  0.1467  0.0066
+
+=== ROBUST STATISTICAL ANALYSIS (STARTUP) ===
+Statistical Test Results:
+    scenario  docker_n  container_n  docker_mean  container_mean  docker_std  container_std  docker_median  container_median           test_used  test_statistic      p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+startup_warm        30           30       0.1467        0.751467    0.006598       0.014802         0.1475              0.75 Mann-Whitney U test             0.0 2.956116e-11                     True        Normal       Non-normal             True    -52.77704                 Large                1.0                 High        2.956116e-11                    True    2.956116e-11                True
+
+=== DETAILED INTERPRETATION ===
+
+--- startup_warm ---
+Test used: Mann-Whitney U test
+Sample size: Docker=30, Apple container=30
+Normality: Docker=Normal, Apple container=Non-normal
+Homogeneity of variances: True
+P-value (uncorrected): 0.000000
+P-value (Bonferroni): 0.000000
+P-value (FDR): 0.000000
+Significant (FDR): True
+Effect size (Cohen's d): -52.7770 (Large)
+Statistical power: 1.0000 (High)
+CONCLUSION: Docker is significantly better (p=0.000000)
+
+=== ANALYSIS OF VARIANCE (ANOVA) ===
+Test used: Kruskal-Wallis test
+Statistic: 44.304150
+P-value: 0.000000
+Significant: True
+Normality check per group:
+  startup_warm_container: False
+  startup_warm_docker: True
+
+=== EXECUTIVE SUMMARY ===
+Total tests performed: 1
+Tests with significant difference (FDR corrected): 1
+Significance rate: 100.0%
+
+Tests with low statistical power: 0
+Large effects found: 1
+Medium effects found: 0
+
+=== RECOMMENDATIONS ===
+3. Consider additional analyses for scenarios with large effects
+4. Document all experimental settings for replicability
+5. Perform cross-validation of the results
+
+=== LIMITATIONS AND CONSIDERATIONS ===
+1. Limited sample size may affect the robustness of the results
+2. Multiple comparisons increase the chance of false positives
+3. Non-parametric tests may have lower power than parametric tests
+4. Results are specific to the experimental environment used
+5. Interpretation of effect sizes should consider the practical context

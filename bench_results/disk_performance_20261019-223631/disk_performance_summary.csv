@@ -1,0 +1,9 @@
+runtime,test_type,iterations,valid_iterations,mean_throughput_kb_per_sec,std_throughput_kb_per_sec,min_throughput_kb_per_sec,max_throughput_kb_per_sec
+container,random_read,30,30,133.19,25.03,118.54,208.49
+container,random_write,30,30,51.49,2.01,50.26,56.43
+container,sequential_read,30,30,3233.03,282.91,3086.59,4559.54
+container,sequential_write,30,30,2607.59,74.55,2533.74,2778.52
+docker,random_read,30,30,191.68,1.66,188.88,195.41
+docker,random_write,30,30,171.52,2.00,168.30,176.61
+docker,sequential_read,30,30,4349.93,17.22,4317.16,4386.86
+docker,sequential_write,30,30,3822.09,26.70,3765.32,3882.31

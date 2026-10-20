@@ -1,0 +1,33 @@
+=== ROBUST STATISTICAL ANALYSIS REPORT ===
+BENCHMARK DOCKER VS APPLE CONTAINER
+
+Analysis date: 2026-10-20 00:02:46.857175
+Script version: Enhanced Statistical Analysis v2.0
+
+=== METHODOLOGICAL RIGOR ASSESSMENT (INFORMATIONAL) ===
+This section assesses whether the collected data meet methodological rigor standards.
+The statistical analysis is performed regardless of this result.
+
+✅ Status: Data meet methodological rigor
+
+
+=== ROBUST STATISTICAL ANALYSIS (STREAM) ===
+Metric: Bandwidth (MB/s)
+Statistical Test Results:
+scenario  docker_n  container_n   docker_mean  container_mean   docker_std  container_std  docker_median  container_median           test_used  test_statistic  p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+     Add        60           60 120068.010000   119533.353333 31462.928371   32307.389572      114667.25         117977.50 Mann-Whitney U test          2223.5 0.026405                     True    Non-normal       Non-normal             True     0.016767            Negligible           0.050951                  Low            0.105621                   False        0.052811               False
+    Copy        60           60 118996.048333   117144.338333 27044.710261   29265.676551      116854.95         115238.05 Mann-Whitney U test          2185.0 0.043579                     True    Non-normal       Non-normal            False     0.065717            Negligible           0.064726                  Low            0.174315                   False        0.058105               False
+   Scale        60           60 118037.605000   116678.820000 27151.665817   29277.061366      116215.35         114649.70 Mann-Whitney U test          2151.5 0.065433                    False    Non-normal       Non-normal            False     0.048125            Negligible           0.057867                  Low            0.261730                   False        0.065433               False
+   Triad        60           60 121359.863333   119602.360000 32562.303642   32412.269777      114346.35         117777.70 Mann-Whitney U test          2543.0 0.000097                     True    Non-normal       Non-normal             True     0.054098            Negligible           0.059953                  Low            0.000389                    True        0.000389                True
+
+=== SUMMARY ===
+Tests with significant difference: 1/4
+  Triad: Docker is better (p=0.000389, d=0.0541)
+
+
+=== LIMITATIONS AND CONSIDERATIONS ===
+1. Limited sample size may affect the robustness of the results
+2. Multiple comparisons increase the chance of false positives
+3. Non-parametric tests may have lower power than parametric tests
+4. Results are specific to the experimental environment used
+5. Interpretation of effect sizes should consider the practical context
