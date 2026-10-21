@@ -1,0 +1,3 @@
+benchmark,scenario,tool,n,mean,std,median,iqr,ci_lower,ci_upper,effect_size,p_value_fdr_bh,significant,statistical_power
+HTTP,http,container,30,62309.6760,490.7679,62368.0550,637.8275,62126.4203,62492.9317,-31.6086,0.0000,True,1.0000
+HTTP,http,docker,30,49843.1543,265.0545,49834.2300,405.3825,49744.1813,49942.1273,-31.6086,0.0000,True,1.0000

@@ -1,0 +1,30 @@
+=== ROBUST STATISTICAL ANALYSIS REPORT ===
+BENCHMARK DOCKER VS APPLE CONTAINER
+
+Analysis date: 2026-10-21 04:46:34.635927
+Script version: Enhanced Statistical Analysis v2.0
+
+=== METHODOLOGICAL RIGOR ASSESSMENT (INFORMATIONAL) ===
+This section assesses whether the collected data meet methodological rigor standards.
+The statistical analysis is performed regardless of this result.
+
+✅ Status: Data meet methodological rigor
+
+
+=== ROBUST STATISTICAL ANALYSIS (Math) ===
+Metric: Execution Time (seconds)
+Statistical Test Results:
+scenario  docker_n  container_n  docker_mean  container_mean  docker_std  container_std  docker_median  container_median           test_used  test_statistic  p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+      pi        60           60    85.743166       85.379429    1.707027       1.705265      85.714157         85.883081 Mann-Whitney U test          2640.0 0.000011                     True    Non-normal       Non-normal             True     0.213192                 Small           0.212258                  Low            0.000011                    True        0.000011                True
+
+=== SUMMARY ===
+Tests with significant difference: 1/1
+  pi: Apple container is better (p=0.000011, d=0.2132)
+
+
+=== LIMITATIONS AND CONSIDERATIONS ===
+1. Limited sample size may affect the robustness of the results
+2. Multiple comparisons increase the chance of false positives
+3. Non-parametric tests may have lower power than parametric tests
+4. Results are specific to the experimental environment used
+5. Interpretation of effect sizes should consider the practical context

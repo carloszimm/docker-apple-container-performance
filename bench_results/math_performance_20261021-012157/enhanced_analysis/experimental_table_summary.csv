@@ -1,0 +1,5 @@
+benchmark,scenario,tool,n,mean,std,median,iqr,ci_lower,ci_upper,effect_size,p_value_fdr_bh,significant,statistical_power
+Math,pi_1t,container,30,83.7033,0.2218,83.6689,0.0765,83.6205,83.7861,2.1907,0.0000,True,1.0000
+Math,pi_1t,docker,30,84.0550,0.0483,84.0529,0.0274,84.0369,84.0730,2.1907,0.0000,True,1.0000
+Math,pi_2t,container,30,87.0556,0.2333,87.0178,0.0457,86.9684,87.1427,1.8351,0.0000,True,1.0000
+Math,pi_2t,docker,30,87.4314,0.1717,87.3630,0.1770,87.3673,87.4955,1.8351,0.0000,True,1.0000

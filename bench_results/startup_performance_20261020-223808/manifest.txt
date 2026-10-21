@@ -1,0 +1,46 @@
+=== EXPERIMENT MANIFEST - STARTUP PERFORMANCE ===
+Date: Tue Oct 20 22:41:06 -03 2026
+Experiment: Startup Performance (Docker Desktop vs Apple container)
+Iterations: 30
+Minimum valid: 30
+Confidence level: 95%
+Significance level: 0.05
+Warmup iterations: 5
+Pause between iterations: 2s
+
+=== GENERATED FILES ===
+total 48
+drwxr-xr-x   8 carloszimmerle  staff   256 Oct 20 22:41 .
+drwxr-xr-x  16 carloszimmerle  staff   512 Oct 20 22:38 ..
+-rw-r--r--   1 carloszimmerle  staff   219 Oct 20 22:41 container_startup_warm_results.csv
+-rw-r--r--   1 carloszimmerle  staff   219 Oct 20 22:39 docker_startup_warm_results.csv
+-rw-r--r--   1 carloszimmerle  staff     0 Oct 20 22:41 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff  5667 Oct 20 22:41 results_main.csv
+-rw-r--r--   1 carloszimmerle  staff   171 Oct 20 22:41 startup_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff  2220 Oct 20 22:41 system_load_log.csv
+
+=== CONFIGURATION ===
+- Methodological rigor: 30 iterations
+- Statistical validation: Minimum 30 valid iterations
+- Test: startup_warm (container already cached)
+- Runtimes: Docker Desktop, Apple container
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- CPU threshold: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentation only. It does not prevent iterations from running.
+
+=== METHODOLOGY ===
+- Measurement of container startup time
+- Result validation (100ms - 30s)
+- Robust statistical analysis
+- Full data transparency
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Replicability for other researchers
+- Innovative contribution

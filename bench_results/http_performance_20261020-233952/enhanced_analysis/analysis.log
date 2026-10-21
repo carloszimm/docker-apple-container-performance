@@ -1,0 +1,6 @@
+2026-10-20 23:55:39,219 - __main__ - INFO - Logging configured. Log file: bench_results/http_performance_20261020-233952/enhanced_analysis/analysis.log
+2026-10-20 23:55:39,220 - __main__ - INFO - Loaded results_wrk.csv: 60 records
+2026-10-20 23:55:39,233 - __main__ - INFO - CSV table saved successfully: bench_results/http_performance_20261020-233952/enhanced_analysis/experimental_table_complete.csv
+2026-10-20 23:55:39,234 - __main__ - INFO - LaTeX table saved successfully: bench_results/http_performance_20261020-233952/enhanced_analysis/experimental_table_complete.tex
+2026-10-20 23:55:39,234 - __main__ - INFO - Summary table saved successfully: bench_results/http_performance_20261020-233952/enhanced_analysis/experimental_table_summary.csv
+2026-10-20 23:55:39,235 - __main__ - INFO - Statistical report generated successfully: bench_results/http_performance_20261020-233952/enhanced_analysis/enhanced_analysis_report.txt

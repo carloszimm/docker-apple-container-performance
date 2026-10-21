@@ -1,0 +1,5 @@
+benchmark,scenario,tool,n,mean,std,median,iqr,ci_lower,ci_upper,effect_size,p_value_fdr_bh,significant,statistical_power
+CPU/Memory,cpu_1t,container,30,8789.1940,16.9307,8790.9550,16.3675,8782.8720,8795.5160,-1.0257,0.0002,True,0.9742
+CPU/Memory,cpu_1t,docker,30,8771.6943,17.1922,8773.3350,18.0650,8765.2747,8778.1140,-1.0257,0.0002,True,0.9742
+CPU/Memory,cpu_2t,container,30,16881.1223,35.2474,16876.8050,33.9125,16867.9607,16894.2839,-1.5697,0.0000,True,1.0000
+CPU/Memory,cpu_2t,docker,30,16819.9450,42.3729,16814.4750,44.8700,16804.1227,16835.7673,-1.5697,0.0000,True,1.0000

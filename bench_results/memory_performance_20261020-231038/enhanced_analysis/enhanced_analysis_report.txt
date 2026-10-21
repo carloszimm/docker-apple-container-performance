@@ -1,0 +1,29 @@
+=== ROBUST STATISTICAL ANALYSIS REPORT ===
+BENCHMARK DOCKER VS APPLE CONTAINER
+
+Analysis date: 2026-10-20 23:39:46.188311
+Script version: Enhanced Statistical Analysis v2.0
+
+=== METHODOLOGICAL RIGOR ASSESSMENT (INFORMATIONAL) ===
+This section assesses whether the collected data meet methodological rigor standards.
+The statistical analysis is performed regardless of this result.
+
+⚠️  Status: Data do not fully meet methodological rigor
+   (Analysis performed normally, but results should be interpreted with caution)
+
+❌ Points of attention:
+  - sysbench - docker memory: 30 iterations (Jain requires at least 81 for precision ±5.0%)
+
+⚠️  Recommendations:
+  - sysbench - docker memory: High variability (CV=22.51%)
+
+NOTE: For full methodological rigor, running with 30 iterations is recommended.
+The results presented below are valid, but may have statistical limitations.
+
+
+=== LIMITATIONS AND CONSIDERATIONS ===
+1. Limited sample size may affect the robustness of the results
+2. Multiple comparisons increase the chance of false positives
+3. Non-parametric tests may have lower power than parametric tests
+4. Results are specific to the experimental environment used
+5. Interpretation of effect sizes should consider the practical context

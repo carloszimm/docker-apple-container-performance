@@ -1,0 +1,9 @@
+benchmark,scenario,tool,n,mean,std,median,iqr,ci_lower,ci_upper,effect_size,p_value_fdr_bh,significant,statistical_power
+Disk I/O,random_read,container,30,124.8293,7.2475,122.0600,2.0900,122.1231,127.5356,12.6661,0.0000,True,1.0000
+Disk I/O,random_read,docker,30,192.8287,2.2623,192.9400,3.6250,191.9839,193.6734,12.6661,0.0000,True,1.0000
+Disk I/O,random_write,container,30,51.6327,3.3500,50.6950,0.3750,50.3817,52.8836,47.3003,0.0000,True,1.0000
+Disk I/O,random_write,docker,30,171.1707,1.2453,170.9100,1.7300,170.7056,171.6357,47.3003,0.0000,True,1.0000
+Disk I/O,sequential_read,container,30,3214.3723,271.9052,3115.7800,47.3750,3112.8413,3315.9034,5.9351,0.0000,True,1.0000
+Disk I/O,sequential_read,docker,30,4358.2030,18.7638,4358.3100,20.1750,4351.1965,4365.2095,5.9351,0.0000,True,1.0000
+Disk I/O,sequential_write,container,30,2601.1833,99.7280,2552.0900,152.6075,2563.9443,2638.4224,16.4988,0.0000,True,1.0000
+Disk I/O,sequential_write,docker,30,3799.9643,24.7578,3805.0100,29.1400,3790.7196,3809.2090,16.4988,0.0000,True,1.0000

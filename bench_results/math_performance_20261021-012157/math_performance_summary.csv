@@ -1,0 +1,5 @@
+runtime,threads,iterations,valid_iterations,mean_time_seconds,std_time_seconds,min_time_seconds,max_time_seconds,mean_throughput_digits_per_sec
+container,1,30,30,83.70,0.22,83.48,84.84,119.47
+container,2,30,30,87.06,0.23,86.93,88.27,229.73
+docker,1,30,30,84.05,0.05,83.93,84.17,118.96
+docker,2,30,30,87.43,0.17,87.26,87.73,228.75

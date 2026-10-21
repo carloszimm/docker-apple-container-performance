@@ -1,0 +1,53 @@
+=== EXPERIMENTAL MANIFEST - CPU PERFORMANCE ===
+Date: Tue Oct 20 23:10:35 -03 2026
+Experiment: CPU Performance (Docker vs Apple container)
+Iterations: 30
+Valid minimum: 30
+Confidence level: 95%
+Significance level: 0.05
+Warmup iterations: 5
+
+=== GENERATED FILES ===
+total 80
+drwxr-xr-x  10 carloszimmerle  staff    320 Oct 20 23:10 .
+drwxr-xr-x  17 carloszimmerle  staff    544 Oct 20 22:41 ..
+-rw-r--r--   1 carloszimmerle  staff    758 Oct 20 22:48 container_sysbench_cpu_1.csv
+-rw-r--r--   1 carloszimmerle  staff    818 Oct 20 23:03 container_sysbench_cpu_2.csv
+-rw-r--r--   1 carloszimmerle  staff    340 Oct 20 23:10 cpu_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff    758 Oct 20 22:55 docker_sysbench_cpu_1.csv
+-rw-r--r--   1 carloszimmerle  staff    818 Oct 20 23:10 docker_sysbench_cpu_2.csv
+-rw-r--r--   1 carloszimmerle  staff      0 Oct 20 23:10 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff  10741 Oct 20 23:10 results_sysbench.csv
+-rw-r--r--   1 carloszimmerle  staff   4440 Oct 20 23:10 system_load_log.csv
+
+=== CONFIGURATION ===
+- Methodological rigor: 30 iterations
+- Statistical validation: minimum 30 valid iterations
+- Test: sysbench cpu (2 tests per runtime)
+- Runtimes: Docker, Apple container
+- Threads: 1 and 2
+- Duration: 10 seconds per test
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- CPU threshold: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentation only. It does not prevent iterations from running.
+
+=== IMAGE USED (METHODOLOGICAL RIGOR) ===
+Image: local/sysbench:1.0.20-alpine3.24
+Digest: sha256:6cf1b1e9f52c593dc5950c710122e1ed550a39ac71497ce1739d63d5c8ae131e
+Note: Identical image guaranteed on both runtimes for experimental validity
+
+=== METHODOLOGY ===
+- CPU performance measurement
+- Result validation (positive numeric values)
+- Robust statistical analysis
+- Full data transparency
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Reproducibility for other researchers

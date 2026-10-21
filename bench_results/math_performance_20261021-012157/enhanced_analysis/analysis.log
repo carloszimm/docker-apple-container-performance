@@ -1,0 +1,6 @@
+2026-10-21 04:46:33,861 - __main__ - INFO - Logging configured. Log file: bench_results/math_performance_20261021-012157/enhanced_analysis/analysis.log
+2026-10-21 04:46:33,862 - __main__ - INFO - Loaded results_math.csv: 240 records
+2026-10-21 04:46:34,634 - __main__ - INFO - CSV table saved successfully: bench_results/math_performance_20261021-012157/enhanced_analysis/experimental_table_complete.csv
+2026-10-21 04:46:34,635 - __main__ - INFO - LaTeX table saved successfully: bench_results/math_performance_20261021-012157/enhanced_analysis/experimental_table_complete.tex
+2026-10-21 04:46:34,635 - __main__ - INFO - Summary table saved successfully: bench_results/math_performance_20261021-012157/enhanced_analysis/experimental_table_summary.csv
+2026-10-21 04:46:34,641 - __main__ - INFO - Statistical report generated successfully: bench_results/math_performance_20261021-012157/enhanced_analysis/enhanced_analysis_report.txt

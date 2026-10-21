@@ -1,0 +1,65 @@
+=== EXPERIMENT MANIFEST - DISK PERFORMANCE ===
+Date: Wed Oct 21 00:56:35 -03 2026
+Experiment: Disk I/O Performance (Docker Desktop vs Apple container)
+Iterations: 30
+Valid minimum: 30
+Significance level: 0.05
+Confidence level: 95%
+
+=== GENERATED FILES ===
+total 152
+drwxr-xr-x  14 carloszimmerle  staff    448 Oct 21 00:56 .
+drwxr-xr-x  20 carloszimmerle  staff    640 Oct 20 23:55 ..
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:10 container_fio_random_read.csv
+-rw-r--r--   1 carloszimmerle  staff    849 Oct 21 00:33 container_fio_random_write.csv
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:18 container_fio_sequential_read.csv
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:56 container_fio_sequential_write.csv
+-rw-r--r--   1 carloszimmerle  staff    605 Oct 21 00:56 disk_performance_summary.csv
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:26 docker_fio_random_read.csv
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:48 docker_fio_random_write.csv
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:41 docker_fio_sequential_read.csv
+-rw-r--r--   1 carloszimmerle  staff    879 Oct 21 00:03 docker_fio_sequential_write.csv
+-rw-r--r--   1 carloszimmerle  staff      0 Oct 21 00:56 manifest.txt
+-rw-r--r--   1 carloszimmerle  staff  24863 Oct 21 00:56 results_fio.csv
+-rw-r--r--   1 carloszimmerle  staff   8881 Oct 21 00:56 system_load_log.csv
+
+=== CONFIGURATION ===
+- Iterations: 30
+- Statistical validation: Minimum 30 valid iterations
+- Test: fio (4 I/O types per runtime)
+- Runtimes: Docker Desktop, Apple container
+- Test size: 1024MB
+- Test types: sequential_write, sequential_read, random_write, random_read
+- Warmup iterations: 5
+
+=== LOAD MONITORING (T4) ===
+- Script: src/utils/monitor_system_load.sh
+- Threshold CPU: 20.0%
+- Memory threshold: 80.0%
+- Load log: system_load_log.csv
+- Note: Monitoring is informational/documentary only. It does not prevent iterations from running.
+
+=== IMAGE USED (METHODOLOGICAL RIGOR) ===
+Image: bench-fio:alpine-3.24
+Digest: sha256:507a54a65bf2c7410ce2284cb35f061802646ccc438da151031195fbc77541f4
+Note: Identical image guaranteed on both runtimes for experimental validity
+
+=== "SETUP NOISE" CONTROL (HIGHEST PRIORITY) ===
+- Policy: remove setup from inside the iteration (package installation, dataset creation)
+- Implementation:
+  - Derived image (fio+jq) built before measurement
+  - Worker container per test (runtime+test_type) and exec per iteration
+  - Dataset (fio_*.dat file) prepared once per test, outside the measurement loop
+
+=== METHODOLOGY ===
+- Disk I/O performance measurement
+- Result validation (positive numeric values)
+- Robust statistical analysis
+- Full data transparency
+- Based on Raj Jain - The Art of Computer Systems Performance Analysis
+
+=== METHODOLOGICAL STANDARDS ===
+- Methodological rigor suitable for academic publication
+- Scientific validation with multiple-comparison corrections
+- Full transparency of data and methods
+- Reproducibility for other researchers

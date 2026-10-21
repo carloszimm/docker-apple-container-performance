@@ -1,0 +1,5 @@
+benchmark,scenario,tool,unit,n,mean,std,median,q25,q75,iqr,min,max,p5,p95,ci_lower,ci_upper,skewness,kurtosis,test_used,p_value,p_value_bonferroni,p_value_fdr_bh,significant,effect_size,effect_interpretation,statistical_power,power_interpretation
+Math,pi_1t,container,seconds,30,83.7033,0.2218,83.6689,83.6375,83.7140,0.0765,83.4776,84.8355,83.5727,83.7502,83.6205,83.7861,4.6004,21.2653,Mann-Whitney U test,0.0000,0.0000,0.0000,True,2.1907,Large,1.0000,High
+Math,pi_1t,docker,seconds,30,84.0550,0.0483,84.0529,84.0432,84.0706,0.0274,83.9281,84.1715,83.9693,84.1482,84.0369,84.0730,-0.0377,1.6400,Mann-Whitney U test,0.0000,0.0000,0.0000,True,2.1907,Large,1.0000,High
+Math,pi_2t,container,seconds,30,87.0556,0.2333,87.0178,86.9888,87.0345,0.0457,86.9306,88.2734,86.9529,87.0878,86.9684,87.1427,4.9709,23.5136,Mann-Whitney U test,0.0000,0.0000,0.0000,True,1.8351,Large,1.0000,High
+Math,pi_2t,docker,seconds,30,87.4314,0.1717,87.3630,87.3117,87.4887,0.1770,87.2568,87.7312,87.2635,87.7254,87.3673,87.4955,0.9325,-0.7772,Mann-Whitney U test,0.0000,0.0000,0.0000,True,1.8351,Large,1.0000,High
