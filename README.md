@@ -141,19 +141,19 @@ source venv/bin/activate
 pytest tests/test_benchmark.py
 ```
 
-## Results (2026-10-19/20)
+## Results (2026-10-20/21)
 
-Run with n = 30 valid iterations per benchmark (Apple container 1.5.0, Docker Desktop 4.95.0). Summary of findings; full statistics are in `bench_results/enhanced_analysis/`:
+Run with n = 30 valid iterations per benchmark (Apple container 1.5.0, Docker Desktop 4.95.0). Summary of findings; full statistics are in `bench_results/enhanced_analysis/`. A first full round (2026-10-19/20, kept in `bench_results/round1/`) is a replication: 38 of the 40 runtime × scenario means agree within 2.1% between the two rounds.
 
 | Benchmark | Winner | Difference |
 |-----------|--------|------------|
-| Startup | Docker | ~5.1× faster (~147 ms vs ~752 ms) |
-| CPU | Apple container | marginal (+0.3–0.4%) |
-| Memory | Apple container | +0.6% (1 thread), +24.0% (2 threads) |
-| HTTP | Apple container | +22.7% req/s (62,405 vs 50,869) |
-| Disk I/O | Docker | 35–233% faster |
-| STREAM | Docker | +1.7–4.7% (1 thread); ≤ +1.2% or equivalent (2 threads) |
-| Math (π) | Apple container | marginal (0.3–0.4% faster) |
+| Startup | Docker | ~5.2× faster (~148 ms vs ~765 ms) |
+| CPU | Apple container | marginal (+0.2–0.4%) |
+| Memory | Apple container | +0.5% (1 thread), +8.1% (2 threads, high variance in Docker) |
+| HTTP | Apple container | +25.0% req/s (62,310 vs 49,843) |
+| Disk I/O | Docker | 36–232% faster (higher variance in Apple container) |
+| STREAM | Docker | +1.8–5.0% (1 thread); Triad +1.9%, other operations equivalent (2 threads) |
+| Math (π) | Apple container | marginal (0.4% faster) |
 
 ## Authors
 
