@@ -1,0 +1,200 @@
+================================================================================
+SAMPLE SIZE ANALYSIS (REQUIRED NUMBER OF REPLICATIONS)
+Based on Raj Jain, Ch. 13: The Art of Computer Systems Performance Analysis
+================================================================================
+
+Analysis Parameters:
+  - Confidence Level: 95.0%
+  - Desired Precision: ±5.0% of the mean
+  - Distribution: t (when σ is estimated from the sample)
+
+================================================================================
+SUMMARY BY SCENARIO
+================================================================================
+
+
+startup_warm/startup_time:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 2.39% | Current error=±0.89%
+  ✅ docker      : n=30 | Required= 2 | CV= 3.27% | Current error=±1.22%
+
+cpu/1/events_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.19% | Current error=±0.07%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.20% | Current error=±0.07%
+
+cpu/2/events_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.21% | Current error=±0.08%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.25% | Current error=±0.09%
+
+memory/1/throughput_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.07% | Current error=±0.03%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.04% | Current error=±0.01%
+
+memory/2/throughput_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 1.01% | Current error=±0.38%
+  ⚠️ docker      : n=30 | Required=81 | CV=22.51% | Current error=±8.41%
+
+http/4/requests_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.79% | Current error=±0.29%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.53% | Current error=±0.20%
+
+random_read/throughput_kb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 6 | CV= 5.81% | Current error=±2.17%
+  ✅ docker      : n=30 | Required= 1 | CV= 1.17% | Current error=±0.44%
+
+random_write/throughput_kb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 8 | CV= 6.49% | Current error=±2.42%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.73% | Current error=±0.27%
+
+sequential_read/throughput_kb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required=12 | CV= 8.46% | Current error=±3.16%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.43% | Current error=±0.16%
+
+sequential_write/throughput_kb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 3 | CV= 3.83% | Current error=±1.43%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.65% | Current error=±0.24%
+
+Add/1/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.25% | Current error=±0.09%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.36% | Current error=±0.13%
+
+Add/2/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.83% | Current error=±0.31%
+  ✅ docker      : n=30 | Required= 1 | CV= 2.02% | Current error=±0.75%
+
+Copy/1/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.42% | Current error=±0.16%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.63% | Current error=±0.24%
+
+Copy/2/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 1.06% | Current error=±0.39%
+  ✅ docker      : n=30 | Required= 2 | CV= 2.48% | Current error=±0.92%
+
+Scale/1/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.35% | Current error=±0.13%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.58% | Current error=±0.22%
+
+Scale/2/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 1.09% | Current error=±0.41%
+  ✅ docker      : n=30 | Required= 1 | CV= 2.11% | Current error=±0.79%
+
+Triad/1/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.29% | Current error=±0.11%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.27% | Current error=±0.10%
+
+Triad/2/bandwidth_mb_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.89% | Current error=±0.33%
+  ✅ docker      : n=30 | Required= 1 | CV= 1.16% | Current error=±0.43%
+
+pi/1/throughput_digits_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.26% | Current error=±0.10%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.06% | Current error=±0.02%
+
+pi/1/time_seconds:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.27% | Current error=±0.10%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.06% | Current error=±0.02%
+
+pi/2/throughput_digits_per_sec:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.26% | Current error=±0.10%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.20% | Current error=±0.07%
+
+pi/2/time_seconds:
+--------------------------------------------------------------------------------
+  ✅ container   : n=30 | Required= 1 | CV= 0.27% | Current error=±0.10%
+  ✅ docker      : n=30 | Required= 1 | CV= 0.20% | Current error=±0.07%
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+⚠️  1 scenarios need more replications:
+
+  - memory/2/throughput_mb_per_sec (docker): Add 51 replications (current: 30, required: 81)
+
+================================================================================
+STATISTICAL DETAILS
+================================================================================
+
+benchmark      tool                               scenario  current_n  required_n  sufficient          mean         std        cv  margin_of_error  margin_of_error_percent  precision_percent
+     main container              startup_warm/startup_time         30           1        True      0.764633    0.018292  2.392214         0.006830                 0.893267                5.0
+     main    docker              startup_warm/startup_time         30           2        True      0.148000    0.004835  3.267038         0.001805                 1.219932                5.0
+ sysbench container                   cpu/1/events_per_sec         30           1        True   8789.194000   16.930666  0.192630         6.322015                 0.071929                5.0
+ sysbench container                   cpu/2/events_per_sec         30           1        True  16881.122333   35.247384  0.208798        13.161589                 0.077966                5.0
+ sysbench container         memory/1/throughput_mb_per_sec         30           1        True   5931.093000    4.137537  0.069760         1.544982                 0.026049                5.0
+ sysbench container         memory/2/throughput_mb_per_sec         30           1        True  10589.091667  106.991195  1.010391        39.951169                 0.377286                5.0
+ sysbench    docker                   cpu/1/events_per_sec         30           1        True   8771.694333   17.192206  0.195996         6.419675                 0.073186                5.0
+ sysbench    docker                   cpu/2/events_per_sec         30           1        True  16819.945000   42.372894  0.251921        15.822299                 0.094069                5.0
+ sysbench    docker         memory/1/throughput_mb_per_sec         30           1        True   5899.653333    2.365672  0.040098         0.883356                 0.014973                5.0
+ sysbench    docker         memory/2/throughput_mb_per_sec         30          81       False   9794.354333 2204.699457 22.509901       823.248307                 8.405335                5.0
+      wrk container                http/4/requests_per_sec         30           1        True  62309.676000  490.767858  0.787627       183.255730                 0.294105                5.0
+      wrk    docker                http/4/requests_per_sec         30           1        True  49843.154333  265.054535  0.531777        98.972990                 0.198569                5.0
+      fio container      random_read/throughput_kb_per_sec         30           6        True    124.829333    7.247468  5.805901         2.706249                 2.167959                5.0
+      fio container     random_write/throughput_kb_per_sec         30           8        True     51.632667    3.350038  6.488213         1.250925                 2.422739                5.0
+      fio container  sequential_read/throughput_kb_per_sec         30          12        True   3214.372333  271.905164  8.459044       101.531057                 3.158659                5.0
+      fio container sequential_write/throughput_kb_per_sec         30           3        True   2601.183333   99.727953  3.833946        37.239030                 1.431619                5.0
+      fio    docker      random_read/throughput_kb_per_sec         30           1        True    192.828667    2.262252  1.173193         0.844739                 0.438077                5.0
+      fio    docker     random_write/throughput_kb_per_sec         30           1        True    171.170667    1.245339  0.727542         0.465017                 0.271669                5.0
+      fio    docker  sequential_read/throughput_kb_per_sec         30           1        True   4358.203000   18.763772  0.430539         7.006507                 0.160766                5.0
+      fio    docker sequential_write/throughput_kb_per_sec         30           1        True   3799.964333   24.757793  0.651527         9.244712                 0.243284                5.0
+   stream container             Add/1/bandwidth_mb_per_sec         30           1        True  87652.093333  219.579165  0.250512        81.992208                 0.093543                5.0
+   stream container             Add/2/bandwidth_mb_per_sec         30           1        True 152425.126667 1266.111703  0.830645       472.773880                 0.310168                5.0
+   stream container            Copy/1/bandwidth_mb_per_sec         30           1        True  88203.356667  367.745438  0.416929       137.318403                 0.155684                5.0
+   stream container            Copy/2/bandwidth_mb_per_sec         30           1        True 146402.726667 1547.065345  1.056719       577.683694                 0.394585                5.0
+   stream container           Scale/1/bandwidth_mb_per_sec         30           1        True  87993.400000  304.877401  0.346478       113.843093                 0.129377                5.0
+   stream container           Scale/2/bandwidth_mb_per_sec         30           1        True 145511.653333 1586.688042  1.090420       592.479052                 0.407169                5.0
+   stream container           Triad/1/bandwidth_mb_per_sec         30           1        True  87618.053333  253.855511  0.289730        94.791206                 0.108187                5.0
+   stream container           Triad/2/bandwidth_mb_per_sec         30           1        True 152338.673333 1358.293903  0.891628       507.195279                 0.332939                5.0
+   stream    docker             Add/1/bandwidth_mb_per_sec         30           1        True  89203.183333  321.105403  0.359971       119.902728                 0.134415                5.0
+   stream    docker             Add/2/bandwidth_mb_per_sec         30           1        True 152744.963333 3080.349139  2.016662      1150.221272                 0.753034                5.0
+   stream    docker            Copy/1/bandwidth_mb_per_sec         30           1        True  92607.030000  583.198313  0.629756       217.769829                 0.235155                5.0
+   stream    docker            Copy/2/bandwidth_mb_per_sec         30           2        True 147397.103333 3649.216621  2.475772      1362.639881                 0.924469                5.0
+   stream    docker           Scale/1/bandwidth_mb_per_sec         30           1        True  92163.286667  532.661922  0.577955       198.899231                 0.215812                5.0
+   stream    docker           Scale/2/bandwidth_mb_per_sec         30           1        True 146338.970000 3089.865779  2.111444      1153.774844                 0.788426                5.0
+   stream    docker           Triad/1/bandwidth_mb_per_sec         30           1        True  89279.763333  244.081748  0.273390        91.141623                 0.102085                5.0
+   stream    docker           Triad/2/bandwidth_mb_per_sec         30           1        True 155229.146667 1804.340548  1.162372       673.751833                 0.434037                5.0
+     math container         pi/1/throughput_digits_per_sec         30           1        True    119.466333    0.313110  0.262091         0.116917                 0.097866                5.0
+     math container                      pi/1/time_seconds         30           1        True     83.703308    0.221821  0.265008         0.082829                 0.098956                5.0
+     math container         pi/2/throughput_digits_per_sec         30           1        True    229.733667    0.607910  0.264615         0.226997                 0.098809                5.0
+     math container                      pi/2/time_seconds         30           1        True     87.055550    0.233268  0.267953         0.087104                 0.100055                5.0
+     math    docker         pi/1/throughput_digits_per_sec         30           1        True    118.964333    0.067807  0.056998         0.025320                 0.021283                5.0
+     math    docker                      pi/1/time_seconds         30           1        True     84.054970    0.048278  0.057436         0.018027                 0.021447                5.0
+     math    docker         pi/2/throughput_digits_per_sec         30           1        True    228.746333    0.448134  0.195909         0.167336                 0.073154                5.0
+     math    docker                      pi/2/time_seconds         30           1        True     87.431362    0.171662  0.196339         0.064100                 0.073314                5.0
+
+================================================================================
+METHODOLOGICAL NOTES
+================================================================================
+
+1. The number of replications is computed using the formula:
+   r = (t_{α/2} × s / E)²
+   where:
+   - t_{α/2} is the critical value of the t distribution
+   - s is the sample standard deviation
+   - E is the desired precision (in absolute units)
+
+2. The relative precision (E%) is converted to absolute: E = μ × (E% / 100)
+
+3. The t distribution is used because the standard deviation is estimated from the sample.
+
+4. The computation is iterative when needed for convergence.
+

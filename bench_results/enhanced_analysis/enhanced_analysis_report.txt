@@ -1,0 +1,150 @@
+=== ROBUST STATISTICAL ANALYSIS REPORT ===
+BENCHMARK DOCKER VS APPLE CONTAINER
+
+Analysis date: 2026-10-21 10:51:20.194611
+Script version: Enhanced Statistical Analysis v2.0
+
+=== METHODOLOGICAL RIGOR ASSESSMENT (INFORMATIONAL) ===
+This section assesses whether the collected data meet methodological rigor standards.
+The statistical analysis is performed regardless of this result.
+
+⚠️  Status: Data do not fully meet methodological rigor
+   (Analysis performed normally, but results should be interpreted with caution)
+
+❌ Points of attention:
+  - sysbench - docker memory: 30 iterations (Jain requires at least 81 for precision ±5.0%)
+
+⚠️  Recommendations:
+  - sysbench - docker memory: High variability (CV=22.51%)
+  - fio - container sequential_read: Many outliers (23.3%)
+
+NOTE: For full methodological rigor, running with 30 iterations is recommended.
+The results presented below are valid, but may have statistical limitations.
+
+=== ENHANCED DESCRIPTIVE STATISTICS ===
+Basic Statistics (including Median and IQR):
+                        count    mean  median     std    min    max     q25     q75     iqr      p5     p95    skew  kurtosis
+tool      scenario                                                                                                           
+container startup_warm     30  0.7646  0.7610  0.0183  0.740  0.826  0.7562  0.7648  0.0085  0.7442  0.8046  2.1091    4.6557
+docker    startup_warm     30  0.1480  0.1485  0.0048  0.138  0.156  0.1462  0.1518  0.0055  0.1389  0.1546 -0.5491   -0.3440
+
+Confidence Intervals (95%):
+                        ci_lower  ci_upper
+tool      scenario                        
+container startup_warm    0.7578    0.7715
+docker    startup_warm    0.1462    0.1498
+
+=== ROBUST STATISTICS (Median and IQR) ===
+Median and IQR are robust statistics that are not affected by outliers.
+IQR (Interquartile Range) = Q3 - Q1
+
+                        median     q25     q75     iqr    mean     std
+tool      scenario                                                    
+container startup_warm  0.7610  0.7562  0.7648  0.0085  0.7646  0.0183
+docker    startup_warm  0.1485  0.1462  0.1518  0.0055  0.1480  0.0048
+
+=== ROBUST STATISTICAL ANALYSIS (STARTUP) ===
+Statistical Test Results:
+    scenario  docker_n  container_n  docker_mean  container_mean  docker_std  container_std  docker_median  container_median           test_used  test_statistic      p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+startup_warm        30           30        0.148        0.764633    0.004835       0.018292         0.1485             0.761 Mann-Whitney U test             0.0 2.930227e-11                     True        Normal       Non-normal            False   -46.091633                 Large                1.0                 High        2.930227e-11                    True    2.930227e-11                True
+
+=== DETAILED INTERPRETATION ===
+
+--- startup_warm ---
+Test used: Mann-Whitney U test
+Sample size: Docker=30, Apple container=30
+Normality: Docker=Normal, Apple container=Non-normal
+Homogeneity of variances: False
+P-value (uncorrected): 0.000000
+P-value (Bonferroni): 0.000000
+P-value (FDR): 0.000000
+Significant (FDR): True
+Effect size (Cohen's d): -46.0916 (Large)
+Statistical power: 1.0000 (High)
+CONCLUSION: Docker is significantly better (p=0.000000)
+
+=== ANALYSIS OF VARIANCE (ANOVA) ===
+Test used: Kruskal-Wallis test
+Statistic: 44.321407
+P-value: 0.000000
+Significant: True
+Normality check per group:
+  startup_warm_container: False
+  startup_warm_docker: True
+
+=== EXECUTIVE SUMMARY ===
+Total tests performed: 1
+Tests with significant difference (FDR corrected): 1
+Significance rate: 100.0%
+
+Tests with low statistical power: 0
+Large effects found: 1
+Medium effects found: 0
+
+=== RECOMMENDATIONS ===
+3. Consider additional analyses for scenarios with large effects
+4. Document all experimental settings for replicability
+5. Perform cross-validation of the results
+
+=== ROBUST STATISTICAL ANALYSIS (Disk I/O) ===
+Metric: Throughput (KB/s)
+Statistical Test Results:
+        scenario  docker_n  container_n  docker_mean  container_mean  docker_std  container_std  docker_median  container_median           test_used  test_statistic      p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+     random_read        30           30   192.828667      124.829333    2.262252       7.247468         192.94           122.060 Mann-Whitney U test           900.0 3.017967e-11                     True        Normal       Non-normal             True    12.666137                 Large                1.0                 High        1.207187e-10                    True    4.026479e-11                True
+    random_write        30           30   171.170667       51.632667    1.245339       3.350038         170.91            50.695 Mann-Whitney U test           900.0 3.010407e-11                     True        Normal       Non-normal             True    47.300310                 Large                1.0                 High        1.204163e-10                    True    4.026479e-11                True
+ sequential_read        30           30  4358.203000     3214.372333   18.763772     271.905164        4358.31          3115.780 Mann-Whitney U test           870.0 5.566553e-10                     True        Normal       Non-normal            False     5.935095                 Large                1.0                 High        2.226621e-09                    True    5.566553e-10                True
+sequential_write        30           30  3799.964333     2601.183333   24.757793      99.727953        3805.01          2552.090 Mann-Whitney U test           900.0 3.019859e-11                     True        Normal       Non-normal            False    16.498764                 Large                1.0                 High        1.207944e-10                    True    4.026479e-11                True
+
+=== SUMMARY ===
+Tests with significant difference: 4/4
+  random_read: Docker is better (p=0.000000, d=12.6661)
+  random_write: Docker is better (p=0.000000, d=47.3003)
+  sequential_read: Docker is better (p=0.000000, d=5.9351)
+  sequential_write: Docker is better (p=0.000000, d=16.4988)
+
+
+=== ROBUST STATISTICAL ANALYSIS (STREAM) ===
+Metric: Bandwidth (MB/s)
+Statistical Test Results:
+scenario  docker_n  container_n   docker_mean  container_mean   docker_std  container_std  docker_median  container_median           test_used  test_statistic  p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+     Add        60           60 120974.073333   120038.610000 32112.494324   32672.248648      114961.90         118567.55 Mann-Whitney U test          2346.0 0.004194                     True    Non-normal       Non-normal             True     0.028878            Negligible           0.052824                  Low            0.016778                    True        0.005593                True
+    Copy        60           60 120002.066667   117303.041667 27747.448257   29366.425778      117411.65         115470.80 Mann-Whitney U test          2246.0 0.019372                     True    Non-normal       Non-normal            False     0.094476            Negligible           0.080686                  Low            0.077490                   False        0.019372                True
+   Scale        60           60 119251.128333   116752.526667 27404.740697   29023.937328      116953.30         115144.25 Mann-Whitney U test          2373.0 0.002657                     True    Non-normal       Non-normal            False     0.088521            Negligible           0.076890                  Low            0.010627                    True        0.005313                True
+   Triad        60           60 122254.455000   119978.363333 33277.456825   32647.774223      119244.30         118414.15 Mann-Whitney U test          2620.5 0.000017                     True    Non-normal       Non-normal             True     0.069048            Negligible           0.066270                  Low            0.000067                    True        0.000067                True
+
+=== SUMMARY ===
+Tests with significant difference: 4/4
+  Add: Docker is better (p=0.005593, d=0.0289)
+  Copy: Docker is better (p=0.019372, d=0.0945)
+  Scale: Docker is better (p=0.005313, d=0.0885)
+  Triad: Docker is better (p=0.000067, d=0.0690)
+
+
+=== ROBUST STATISTICAL ANALYSIS (Math) ===
+Metric: Execution Time (seconds)
+Statistical Test Results:
+scenario  docker_n  container_n  docker_mean  container_mean  docker_std  container_std  docker_median  container_median           test_used  test_statistic  p_value  significant_uncorrected docker_normal container_normal  homogeneous_var  effect_size effect_interpretation  statistical_power power_interpretation  p_value_bonferroni  significant_bonferroni  p_value_fdr_bh  significant_fdr_bh
+      pi        60           60    85.743166       85.379429    1.707027       1.705265      85.714157         85.883081 Mann-Whitney U test          2640.0 0.000011                     True    Non-normal       Non-normal             True     0.213192                 Small           0.212258                  Low            0.000011                    True        0.000011                True
+
+=== SUMMARY ===
+Tests with significant difference: 1/1
+  pi: Apple container is better (p=0.000011, d=0.2132)
+
+
+=== LIMITATIONS AND CONSIDERATIONS ===
+1. Limited sample size may affect the robustness of the results
+2. Multiple comparisons increase the chance of false positives
+3. Non-parametric tests may have lower power than parametric tests
+4. Results are specific to the experimental environment used
+5. Interpretation of effect sizes should consider the practical context
+
+
+======================================================================
+SAMPLE SIZE ANALYSIS (Raj Jain, Ch. 13)
+======================================================================
+
+⚠️  1 scenarios need more replications:
+
+  - memory/2/throughput_mb_per_sec (docker): Add 51 replications (current: 30, required: 81)
+
+See full details in: sample_size_analysis.txt
