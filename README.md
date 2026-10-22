@@ -157,4 +157,4 @@ Run with n = 30 valid iterations per benchmark (Apple container 1.5.0, Docker De
 
 ## Authors
 
-Alessandra Pereira and TODO: add remaining authors
+Alessandra Pereira, Carlos Zimmerle, and Kiev Gama.
